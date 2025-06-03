@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "lib": [ "es6", "dom", "es2018" ],
+    "mapRoot": "./",
+    "module": "esnext",
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "outDir": "../dist/out-tsc",
+    "sourceMap": true,
+    "target": "es2018",
+    "typeRoots": [
+      "../node_modules/@types"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@eaf/*": [ "./assets/lib/eaf-ng2-module/src/*" ],
+      "@app/*": [ "./app/*" ],
+      "@shared/*": [ "./shared/*" ],
+      "@node_modules/*": [ "../node_modules/*" ],
+      "@angular/*": [ "../node_modules/@angular/*" ],
+      "@metronic/*": [ "./assets/lib/metronic/*" ]
+    }
+  },
+  "exclude": [ "node_modules", ".angular", "dist" ],
+  "angularCompilerOptions": {
+    "annotateForClosureCompiler": false,
+    "disableTypeScriptVersionCheck": true,
+    "enableI18nLegacyMessageIdFormat": true,
+    "trace": true
+  },
+}

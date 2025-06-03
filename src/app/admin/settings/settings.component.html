@@ -1,0 +1,491 @@
+﻿<div [@routerTransition]>
+    <div class="m-subheader">
+        <div class="row align-items-center">
+            <div class="mr-auto col-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    <span>{{"Settings" | localize}}</span>
+                </h3>
+                <span class="m-section__sub">
+                    {{"SettingsHeaderInfo" | localize}}
+                </span>
+            </div>
+            <div class="col text-right mt-3 mt-md-0">
+                <button class="btn btn-primary" (click)="saveAll()"><i class="la la-floppy-o"></i>
+                    {{"SaveAll" | localize}}</button>
+            </div>
+        </div>
+    </div>
+    <div class="m-content">
+        <div class="m-portlet m-portlet--mobile">
+            <div class="m-portlet__body">
+                <tabset class="tab-container tabbable-line" *ngIf="hostSettings">
+                    <tab heading="{{'General' | localize}}" customClass="m-tabs__item">
+
+                        <h5 *ngIf="showTimezoneSelection" >{{"TimezoneSettings" | localize}}</h5>
+                        <div *ngIf="showTimezoneSelection"  class="form-group m--margin-bottom-20">
+                            <label for="Timezone">{{"DefaultTimezone" | localize}}</label>
+                            <timezone-combo name="Timezone" [(ngModel)]="hostSettings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
+                        </div>
+
+                        <h5>{{"SessionSettings" | localize}}</h5>
+                        <div class="form-group m--margin-bottom-20">
+                            <label for="TokenExpiration">{{"TokenExpirationSettings" | localize}}</label>
+                            <input id="TokenExpiration" type="number" name="TokenExpiration"
+                                class="form-control" [(ngModel)]="hostSettings.userManagement.tokenExpiration"
+                                maxlength="3">
+                        </div>
+
+                        <h5>{{"CookieSettings" | localize}}</h5>
+                        <span class="m-switch m-switch--icon-check">
+                            <label>
+                                <input id="Settings_IsCookieConsentEnabled" class="md-check" type="checkbox"
+                                    name="IsCookieConsentEnabled"
+                                    [(ngModel)]="hostSettings.userManagement.isCookieConsentEnabled">
+                                <span></span>
+                                <label class="m-switch-label">{{"IsCookieConsentEnabled" | localize}}</label>
+                            </label>
+                        </span>
+
+                        <h5>{{"UseCaptchaOnLogin" | localize}}</h5>
+                        <span class="m-switch m-switch--icon-check">
+                            <label>
+                                <input id="Setting_UseCaptchaOnLogin" class="md-check" type="checkbox" name="UseCaptchaOnLogin"
+                                    [(ngModel)]="hostSettings.userManagement.useCaptchaOnLogin">
+                                <span></span>
+                                <label class="m-switch-label">Google ReCaptcha</label>
+                            </label>
+                        </span>
+                        <div *ngIf="hostSettings.userManagement.useCaptchaOnLogin">
+                            <div class="form-group">
+                                <label for="Setting_CaptchaKey">{{"ReCaptcha" | localize}}*</label>
+                                <input id="Setting_CaptchaKey" type="text" class="form-control"
+                                       [(ngModel)]="hostSettings.google.recaptchaSiteKey">
+                            </div>
+                        </div>
+
+                    </tab>
+                    <tab heading="{{'UserManagement' | localize}}" *ngIf="hostSettings.userManagement" customClass="m-tabs__item">
+                        <div class="m-checkbox-list">
+
+                            <h5>{{"LoginSettings" | localize}}</h5>
+                            <span class="m-switch m-switch--icon-check">
+                                <label>
+                                    <input id="Settings_IsEmailConfirmationRequiredForLogin" type="checkbox"
+                                        name="IsEmailConfirmationRequiredForLogin"
+                                        [(ngModel)]="hostSettings.userManagement.isEmailConfirmationRequiredForLogin">
+                                    <span></span>
+                                    <label
+                                        class="m-switch-label">{{"EmailConfirmationRequiredForLogin" | localize}}</label>
+                                </label>
+                            </span>
+
+                            <div *ngIf="hostSettings.azureActiveDirectory.isModuleEnabled">
+                                <h5 class="margin-top-20">{{"ActiveDirectorySettings" | localize}}</h5>
+                                <span class="m-switch m-switch--icon-check">
+                                    <label>
+                                        <input id="Setting_AzureActiveDirectoryIsEnabled" type="checkbox"
+                                            name="AzureActiveDirectoryIsEnabled"
+                                            [(ngModel)]="hostSettings.azureActiveDirectory.isEnabled"
+                                            (click)="clearAdSettings()">
+                                        <span></span>
+                                        <label class="m-switch-label">{{"EnableAzureActiveDirectoryAuthentication" | localize}}</label>
+                                    </label>
+                                </span>
+
+                                <div class="form-group" [hidden]="!hostSettings.azureActiveDirectory.isEnabled">
+                                    <label for="AzurectiveDirectoryTenant">{{"AzureTenant" | localize}}</label>
+                                    <input id="AzureActiveDirectoryTenant" type="text" name="AzureActiveDirectoryTenant"
+                                        class="form-control" [(ngModel)]="hostSettings.azureActiveDirectory.tenant"
+                                        maxlength="128">
+                                </div>
+                                <div class="form-group" [hidden]="!hostSettings.azureActiveDirectory.isEnabled">
+                                    <label for="AzureActiveDirectoryClientId">{{"AzureClientId" | localize}}</label>
+                                    <input id="AzureActiveDirectoryClientId" type="text"
+                                        name="AzureActiveDirectoryClientId" class="form-control"
+                                        [(ngModel)]="hostSettings.azureActiveDirectory.clientId" maxlength="128">
+                                </div>
+                                <div class="form-group" [hidden]="!hostSettings.azureActiveDirectory.isEnabled">
+                                    <label for="AzureActiveDirectoryClientSecret">{{"AzureClientSecret" | localize}}</label>
+                                    <input id="AzureActiveDirectoryClientSecret" type="password"
+                                        name="AzureActiveDirectoryClientSecret" class="form-control"
+                                        [(ngModel)]="hostSettings.azureActiveDirectory.clientSecret" maxlength="128">
+                                </div>
+
+                                <span class="m-switch m-switch--icon-check" [hidden]="!hostSettings.azureActiveDirectory.isEnabled">
+                                    <label>
+                                        <input id="Settings_IsRegisterRequiredForLogin" type="checkbox"
+                                            name="IsRegisterRequiredForLogin"
+                                            [(ngModel)]="hostSettings.userManagement.isRegisterRequiredForLogin">
+                                        <span></span>
+                                        <label class="m-switch-label">{{"RegisterRequiredForLogin" | localize}}</label>
+                                    </label>
+                                </span>
+                                <br>
+
+                                <span class="m-switch m-switch--icon-check m--margin-bottom-20" [hidden]="!hostSettings.azureActiveDirectory.isEnabled">
+                                    <label>
+                                        <input id="Settings_StoreAdTokenInformation" type="checkbox"
+                                            name="StoreAdTokenInformation"
+                                            [(ngModel)]="hostSettings.userManagement.storeAdTokenInformation">
+                                        <span></span>
+                                        <label class="m-switch-label">{{"StoreAdTokenInformation" | localize}}</label>
+                                    </label>
+                                </span>
+
+                            </div>
+
+                            <div *ngIf="hostSettings.ldap.isModuleEnabled">
+                                <h5 class="margin-top-20">{{"LdapSettings" | localize}}</h5>
+
+                                <span class="m-switch m-switch--icon-check">
+                                    <label>
+                                        <input id="Setting_LdapIsEnabled" type="checkbox" name="LdapIsEnabled"
+                                            [(ngModel)]="hostSettings.ldap.isEnabled"
+                                            (click)="clearLdapSettings()">
+                                        <span></span>
+                                        <label
+                                            class="m-switch-label">{{"EnableLdapAuthentication" | localize}}</label>
+                                    </label>
+                                </span>
+
+                                <div class="form-group" [hidden]="!hostSettings.ldap.isEnabled">
+                                    <label for="LdapDomainName">{{"DomainName" | localize}}</label>
+                                    <input id="LdapDomainName" type="text" name="LdapDomainName" class="form-control" [(ngModel)]="hostSettings.ldap.domain" maxlength="128">
+                                </div>
+                                <div class="form-group" [hidden]="!hostSettings.ldap.isEnabled">
+                                    <label for="LdapUserName">{{"UserName" | localize}}</label>
+                                    <input id="LdapUserName" type="text" name="LdapUserName" class="form-control" [(ngModel)]="hostSettings.ldap.userName" maxlength="128">
+                                </div>
+                                <div class="form-group" [hidden]="!hostSettings.ldap.isEnabled">
+                                    <label for="LdapPassword">{{"Password" | localize}}</label>
+                                    <input id="LdapPassword" type="password" name="LdapPassword" class="form-control" [(ngModel)]="hostSettings.ldap.password" maxlength="128">
+                                </div>
+
+                                <span class="m-switch m-switch--icon-check" [hidden]="!hostSettings.ldap.isEnabled">
+                                    <label>
+                                        <input id="Settings_IsRegisterRequiredForLogin" type="checkbox"
+                                            name="IsRegisterRequiredForLogin"
+                                            [(ngModel)]="hostSettings.userManagement.isRegisterRequiredForLogin">
+                                        <span></span>
+                                        <label class="m-switch-label">{{"RegisterRequiredForLogin" | localize}}</label>
+                                    </label>
+                                </span>
+                                <br>
+
+                                <span class="m-switch m-switch--icon-check m--margin-bottom-20" [hidden]="!hostSettings.ldap.isEnabled">
+                                    <label>
+                                        <input id="Settings_StoreAdTokenInformation" type="checkbox"
+                                            name="StoreAdTokenInformation"
+                                            [(ngModel)]="hostSettings.userManagement.storeAdTokenInformation">
+                                        <span></span>
+                                        <label class="m-switch-label">{{"StoreAdTokenInformation" | localize}}</label>
+                                    </label>
+                                </span>
+
+                            </div>
+                        </div>
+                    </tab>
+                    <tab heading="{{'Security' | localize}}" *ngIf="hostSettings.security" customClass="m-tabs__item">
+                        <div>
+                            <h5>{{"PasswordComplexity" | localize}}</h5>
+
+                            <span class="m-switch m-switch--icon-check">
+                                <label>
+                                    <input id="Setting_PasswordComplexity_UseDefaultSettings" type="checkbox"
+                                        name="Setting_PasswordComplexity_UseDefaultSettings"
+                                        [(ngModel)]="hostSettings.security.useDefaultPasswordComplexitySettings">
+                                    <span></span>
+                                    <label class="m-switch-label">{{"UseDefaultSettings" | localize}}</label>
+                                </label>
+                            </span>
+
+                            <div class="m-checkbox-list m--margin-top-10"
+                                *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+
+                                <span class="m-switch m-switch--icon-check">
+                                    <label>
+                                        <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox"
+                                            name="Setting_PasswordComplexity_RequireDigit"
+                                            [(ngModel)]="hostSettings.security.passwordComplexity.requireDigit">
+                                        <span></span>
+                                        <label
+                                            class="m-switch-label">{{"PasswordComplexity_RequireDigit" | localize}}</label>
+                                    </label>
+                                </span><br>
+
+                                <span class="m-switch m-switch--icon-check">
+                                    <label>
+                                        <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox"
+                                            name="Setting_PasswordComplexity_RequireLowercase"
+                                            [(ngModel)]="hostSettings.security.passwordComplexity.requireLowercase">
+                                        <span></span>
+                                        <label
+                                            class="m-switch-label">{{"PasswordComplexity_RequireLowercase" | localize}}</label>
+                                    </label>
+                                </span><br>
+
+                                <span class="m-switch m-switch--icon-check">
+                                    <label>
+                                        <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox"
+                                            name="Setting_PasswordComplexity_RequireNonAlphanumeric"
+                                            [(ngModel)]="hostSettings.security.passwordComplexity.requireNonAlphanumeric">
+                                        <span></span>
+                                        <label
+                                            class="m-switch-label">{{"PasswordComplexity_RequireNonAlphanumeric" | localize}}</label>
+                                    </label>
+                                </span><br>
+
+                                <span class="m-switch m-switch--icon-check">
+                                    <label>
+                                        <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox"
+                                            name="Setting_PasswordComplexity_RequireUppercase"
+                                            [(ngModel)]="hostSettings.security.passwordComplexity.requireUppercase">
+                                        <span></span>
+                                        <label
+                                            class="m-switch-label">{{"PasswordComplexity_RequireUppercase" | localize}}</label>
+                                    </label>
+                                </span>
+
+                                <div class="form-group">
+                                    <label>{{"PasswordComplexity_RequiredLength" | localize}}</label>
+                                    <input type="number" name="RequiredLength" class="form-control"
+                                        [ngClass]="{'edited':hostSettings.security.passwordComplexity.requiredLength}"
+                                        [(ngModel)]="hostSettings.security.passwordComplexity.requiredLength"
+                                        *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                                    <input type="number" name="RequiredLength" class="form-control"
+                                        [ngClass]="{'edited':hostSettings.security.defaultPasswordComplexity.requiredLength}"
+                                        [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requiredLength"
+                                        *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings" disabled>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="m--margin-top-20">
+                            <h5>{{"UserLockOut" | localize}}</h5>
+
+                            <span class="m-switch m-switch--icon-check">
+                                <label>
+                                    <input id="Setting_UserLockOut_IsEnabled" type="checkbox"
+                                        name="Setting_UserLockOut_IsEnabled"
+                                        [(ngModel)]="hostSettings.security.userLockOut.isEnabled">
+                                    <span></span>
+                                    <label
+                                        class="m-switch-label">{{"EnableUserAccountLockingOnFailedLoginAttemts" | localize}}</label>
+                                </label>
+                            </span>
+
+                            <div class="form-group" *ngIf="hostSettings.security.userLockOut.isEnabled">
+                                <label
+                                    for="MaxFailedAccessAttemptsBeforeLockout">{{"MaxFailedAccessAttemptsBeforeLockout" | localize}}</label>
+                                <input id="MaxFailedAccessAttemptsBeforeLockout" type="number"
+                                    name="MaxFailedAccessAttemptsBeforeLockout" class="form-control"
+                                    [ngClass]="{'edited':hostSettings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout}"
+                                    [(ngModel)]="hostSettings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout">
+                            </div>
+                            <div class="form-group" *ngIf="hostSettings.security.userLockOut.isEnabled">
+                                <label
+                                    for="DefaultAccountLockoutDurationAsSeconds">{{"DefaultAccountLockoutDurationAsSeconds" | localize}}</label>
+                                <input id="DefaultAccountLockoutDurationAsSeconds" type="number"
+                                    name="DefaultAccountLockoutSeconds" class="form-control"
+                                    [ngClass]="{'edited':hostSettings.security.userLockOut.defaultAccountLockoutSeconds}"
+                                    [(ngModel)]="hostSettings.security.userLockOut.defaultAccountLockoutSeconds">
+                            </div>
+                        </div>
+                    </tab>
+                    <tab heading="{{'EmailSmtp' | localize}}" *ngIf="hostSettings.email" customClass="m-tabs__item">
+                        <div class="form-group">
+                            <label for="DefaultFromAddress">{{"DefaultFromAddress" | localize}}</label>
+                            <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control"
+                                [ngClass]="{'edited':hostSettings.email.defaultFromAddress}"
+                                [(ngModel)]="hostSettings.email.defaultFromAddress" maxlength="256">
+                        </div>
+                        <div class="form-group">
+                            <label for="DefaultFromDisplayName">{{"DefaultFromDisplayName" | localize}}</label>
+                            <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName"
+                                class="form-control" [ngClass]="{'edited':hostSettings.email.defaultFromDisplayName}"
+                                [(ngModel)]="hostSettings.email.defaultFromDisplayName" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="SmtpHost">{{"SmtpHost" | localize}}</label>
+                            <input id="SmtpHost" type="text" name="SmtpHost" class="form-control"
+                                [ngClass]="{'edited':hostSettings.email.smtpHost}"
+                                [(ngModel)]="hostSettings.email.smtpHost" maxlength="64">
+                        </div>
+                        <div class="form-group">
+                            <label for="SmtpPort">{{"SmtpPort" | localize}}</label>
+                            <input id="SmtpPort" type="number" name="SmtpPort" class="form-control"
+                                [ngClass]="{'edited':hostSettings.email.smtpPort}"
+                                [(ngModel)]="hostSettings.email.smtpPort" maxlength="5">
+                        </div>
+
+                        <span class="m-switch m-switch--icon-check">
+                            <label>
+                                <input id="Settings_SmtpEnableSsl" type="checkbox" name="SmtpEnableSsl"
+                                    [(ngModel)]="hostSettings.email.smtpEnableSsl">
+                                <span></span>
+                                <label class="m-switch-label">{{"UseSsl" | localize}}</label>
+                            </label>
+                        </span>
+                        <br>
+                        <span class="m-switch m-switch--icon-check">
+                            <label>
+                                <input id="Settings_SmtpUseDefaultCredentials" type="checkbox"
+                                    name="SmtpUseDefaultCredentials"
+                                    [(ngModel)]="hostSettings.email.smtpUseDefaultCredentials">
+                                <span></span>
+                                <label class="m-switch-label">{{"UseDefaultCredentials" | localize}}</label>
+                            </label>
+                        </span>
+
+                        <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                            <label for="SmtpDomainName">{{"DomainName" | localize}}</label>
+                            <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control"
+                                [ngClass]="{'edited':hostSettings.email.smtpDomain}"
+                                [(ngModel)]="hostSettings.email.smtpDomain" maxlength="128">
+                        </div>
+                        <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                            <label for="SmtpUserName">{{"UserName" | localize}}</label>
+                            <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
+                                [ngClass]="{'edited':hostSettings.email.smtpUserName}"
+                                [(ngModel)]="hostSettings.email.smtpUserName" maxlength="128">
+                        </div>
+                        <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                            <label for="SmtpPassword">{{"Password" | localize}}</label>
+                            <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control"
+                                [ngClass]="{'edited':hostSettings.email.smtpPassword}"
+                                [(ngModel)]="hostSettings.email.smtpPassword" maxlength="128">
+                        </div>
+                        <hr class="m--margin-top-20" />
+                        <h5>{{"TestEmailSettingsHeader" | localize}}</h5>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button class="btn btn-primary" type="button"
+                                    (click)="sendTestEmail()">{{"SendTestEmail" | localize}}</button>
+                            </div>
+                        </div>
+                    </tab>
+                    <tab heading="{{'ExternalLoginSettings' | localize}}" *ngIf="enabledSocialLoginSettings && enabledSocialLoginSettings.length" customClass="m-tabs__item">
+                        <h5>Google</h5>
+                        <span class="m-switch m-switch--icon-check">
+                            <label>
+                                <input id="Setting_GoogleIsEnabled" type="checkbox"
+                                    name="GoogleIsEnabled"
+                                    [(ngModel)]="hostSettings.externalLoginProviderSettings.google_IsEnabled">
+                                <span></span>
+                                <label class="m-switch-label">{{"EnableGoogleAuthentication" | localize}}</label>
+                            </label>
+                        </span>
+                        <div *ngIf="hostSettings.externalLoginProviderSettings.google_IsEnabled">
+                            <div class="form-group">
+                                <label for="Setting_Google_ClientId">{{"ClientId" | localize}}*</label>
+                                <input id="Setting_Google_ClientId" type="text" class="form-control"
+                                       [(ngModel)]="hostSettings.externalLoginProviderSettings.google.clientId">
+                            </div>
+                            <div class="form-group">
+                                <label>{{"ClientSecret" | localize}}*</label>
+                                <input id="Setting_Google_ClientSecret" [(ngModel)]="hostSettings.externalLoginProviderSettings.google.clientSecret"
+                                    class="form-control m-input" type="password" placeholder="{{'ClientSecret' | localize}} *" name="clientSecret" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Setting_Google_UserInfoEndpoint">{{"UserInfoEndpoint" | localize}}*</label>
+                                <input id="Setting_Google_UserInfoEndpoint" type="text" class="form-control"
+                                       [(ngModel)]="hostSettings.externalLoginProviderSettings.google.userInfoEndpoint">
+                            </div>
+                        </div>
+                        <h5 class="margin-top-20">Microsoft</h5>
+                        <span class="m-switch m-switch--icon-check">
+                            <label>
+                                <input id="Setting_microsoftIsEnabled" type="checkbox"
+                                    name="microsoftIsEnabled"
+                                    [(ngModel)]="hostSettings.externalLoginProviderSettings.microsoft_IsEnabled">
+                                <span></span>
+                                <label class="m-switch-label">{{"EnableMicrosoftAuthentication" | localize}}</label>
+                            </label>
+                        </span>
+                        <div *ngIf="hostSettings.externalLoginProviderSettings.microsoft_IsEnabled">
+                            <div class="form-group">
+                                <label for="Setting_Microsoft_ClientId">{{"ClientId" | localize}}*</label>
+                                <input id="Setting_Microsoft_ClientId" type="text" class="form-control"
+                                       [(ngModel)]="hostSettings.externalLoginProviderSettings.microsoft.clientId">
+                            </div>
+                            <div class="form-group">
+                                <label for="Setting_Microsoft_ClientTenant">{{"AzureTenant" | localize}}</label>
+                                <input id="Setting_Microsoft_ClientTenant" type="text" name="clientTenant"
+                                    class="form-control" [(ngModel)]="hostSettings.externalLoginProviderSettings.microsoft.tenantId"
+                                    maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label>{{"ClientSecret" | localize}}*</label>
+                                <input id="Setting_Microsoft_ClientSecret" [(ngModel)]="hostSettings.externalLoginProviderSettings.microsoft.clientSecret"
+                                    class="form-control m-input" type="password" placeholder="{{'ClientSecret' | localize}} *" name="clientSecret" />
+                            </div>
+                        </div>
+                        <h5 class="margin-top-20">OpenIdConnect</h5>
+                        <span class="m-switch m-switch--icon-check">
+                            <label>
+                                <input id="Setting_openIdConnectIsEnabled" type="checkbox"
+                                    name="openIdConnectIsEnabled"
+                                    [(ngModel)]="hostSettings.externalLoginProviderSettings.openIdConnect_IsEnabled">
+                                <span></span>
+                                <label class="m-switch-label">{{"EnableOpenIdConnectAuthentication" | localize}}</label>
+                            </label>
+                        </span>
+                        <div *ngIf="hostSettings.externalLoginProviderSettings.openIdConnect_IsEnabled">
+                            <div class="form-group">
+                                <label for="Setting_OpenIdConnect_ClientId">{{"ClientId" | localize}}</label>
+                                <input id="Setting_OpenIdConnect_ClientId" type="text" class="form-control"
+                                       [(ngModel)]="hostSettings.externalLoginProviderSettings.openIdConnect.clientId">
+                            </div>
+                            <div class="form-group">
+                                <label for="Setting_OpenIdConnect_ClientSecret">{{"ClientSecret" | localize}}</label>
+                                <input id="Setting_OpenIdConnect_ClientSecret" type="text" class="form-control"
+                                       [(ngModel)]="hostSettings.externalLoginProviderSettings.openIdConnect.clientSecret">
+                            </div>
+                            <div class="form-group">
+                                <label for="Setting_OpenIdConnect_Authority">{{"Authority" | localize}}</label>
+                                <input id="Setting_OpenIdConnect_Authority" type="text" class="form-control"
+                                       [(ngModel)]="hostSettings.externalLoginProviderSettings.openIdConnect.authority">
+                            </div>
+                            <div class="form-group">
+                                <label for="Setting_OpenIdConnect_LoginUrl">{{"LoginUrl" | localize}}</label>
+                                <input id="Setting_OpenIdConnect_LoginUrl" type="text" class="form-control"
+                                       [(ngModel)]="hostSettings.externalLoginProviderSettings.openIdConnect.loginUrl">
+                            </div>
+                            <label for="Setting_OpenIdConnect_ValidateIssuer" class="checkbox mb-3" style="margin-bottom: 0">
+                                <input id="Setting_OpenIdConnect_ValidateIssuer" class="check" type="checkbox" name="AllowSelfRegistration"
+                                       [(ngModel)]="hostSettings.externalLoginProviderSettings.openIdConnect.validateIssuer">
+                                <span></span>
+                                {{"ValidateIssuer" | localize}}
+                            </label>
+                            <key-value-list-manager
+                                #openIdConnectClaimsMappingManager
+                                [header]="l('ClaimsMapping')"
+                                [keyPlaceHolder]="l('ClaimKey')"
+                                [valuePlaceHolder]="l('ClaimValue')"
+                                [items]="openIdConnectClaimMappings">
+                            </key-value-list-manager>
+                        </div>
+                    </tab>
+                    <tab heading="Google Analytics" *ngIf="hostSettings.google" customClass="m-tabs__item">
+                        <div class="form-group">
+                            <label for="Setting_analytics">Analytics</label>
+                            <input id="Setting_analytics" type="text" class="form-control"
+                                   [(ngModel)]="hostSettings.google.analytics">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Setting_tag">Tag Manager</label>
+                            <input id="Setting_tag" type="text" class="form-control"
+                                   [(ngModel)]="hostSettings.google.tag">
+                        </div>
+                    </tab>
+                </tabset>
+            </div>
+        </div>
+    </div>
+</div>

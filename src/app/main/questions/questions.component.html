@@ -1,0 +1,211 @@
+<div [@routerTransition]>
+    <div class="m-subheader">
+        <div class="row align-items-center">
+            <div class="mr-auto col-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    <span>{{"Questions" | localize}}</span>
+                </h3>
+                <span class="m-section__sub">
+                    {{"QuestionHeaderInfo" | localize}}
+                </span>
+            </div>
+            <div class="col text-right mt-3 mt-md-0">
+                <button (click)="createOrEditQuestion.show()"
+                        *ngIf="permission.isGranted('Pages.Questions.Create')"
+                        class="btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                    {{"Create" | localize}}
+                </button>
+                <!--<button hidden="true" (click)="exportToExcel()" class="btn btn-success"><i class="far fa-file-excel"></i> {{"ExportToExcel" | localize}}</button>-->
+            </div>
+        </div>
+    </div>
+    <div class="m-content">
+        <div class="m-portlet m-portlet--mobile">
+            <div class="m-portlet__body">
+                <form autocomplete="off" class="horizontal-form">
+                    <div class="m-form m-form--label-align-right">
+                        <div class="row align-items-center m--margin-bottom-10">
+                            <div class="col-xl-12">
+                                <div class="row">
+                                    <div class="col-md-10"
+                                         style="padding-top: 10px;">
+                                        <label for="description">
+                                            {{"Description" | localize}}
+                                        </label>
+                                        <input [(ngModel)]="searchQuestion.description"
+                                               class="form-control"
+                                               name="Description"
+                                               type="text" />
+                                    </div>
+
+                                    <div class="col-md-2"
+                                         style="padding-top: 10px;">
+                                        <label>&nbsp;</label>
+                                        <div class="form-group">
+                                            <button (click)="getAll()"
+                                                    class="btn btn-primary"
+                                                    type="submit">
+                                                <i [attr.aria-label]="l('Search')"
+                                                   class="flaticon-search-1">
+                                                </i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="align-items-center">
+                    <div [busyIf]="dataTableHelperQuestions.isLoading"
+                         class="primeng-datatable-container">
+                        <p-table (onLazyLoad)="getAll($event)"
+                                 [lazy]="true"
+                                 [paginator]="false"
+                                 [resizableColumns]="dataTableHelperQuestions.resizableColumns"
+                                 [responsive]="dataTableHelperQuestions.isResponsive"
+                                 [scrollable]="true"
+                                 [value]="dataTableHelperQuestions.records"
+                                 #dataTableQuestions
+                                 rows="{{dataTableHelperQuestions.defaultRecordsCountPerPage}}"
+                                 ScrollWidth="100%">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th [hidden]="!isGrantedAny('Pages.Questions.Edit', 'Pages.Questions.Delete')"
+                                        style="width: 80px">
+                                        {{l('Actions')}}
+                                    </th>
+                                    <th pSortableColumn="labelBr"
+                                        style="width: 140px">
+                                        {{'Label' | localize}}(BR)
+                                        <p-sortIcon field="labelBr">
+                                        </p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="descriptionBr"
+                                        style="width: 140px">
+                                        {{'Description' | localize}}(BR)
+                                        <p-sortIcon field="descriptionBr">
+                                        </p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="labelEn"
+                                        style="width: 140px">
+                                        {{'Label' | localize}}(EN)
+                                        <p-sortIcon field="labelEn">
+                                        </p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="descriptionEn"
+                                        style="width: 140px">
+                                        {{'Description' | localize}}(EN)
+                                        <p-sortIcon field="descriptionEn">
+                                        </p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="labelEs"
+                                        style="width: 140px">
+                                        {{'Label' | localize}}(ES)
+                                        <p-sortIcon field="labelEs">
+                                        </p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="descriptionES"
+                                        style="width: 140px">
+                                        {{'Description' | localize}}(ES)
+                                        <p-sortIcon field="descriptionES">
+                                        </p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template let-record="$implicit"
+                                         pTemplate="body">
+                                <tr>
+                                    <td style="width: 80px">
+                                        <div class="btn-group dropdown"
+                                             container="body"
+                                             dropdown>
+                                            <button class="dropdown-toggle btn btn-sm btn-primary"
+                                                    dropdownToggle>
+                                                <i class="fa fa-cog"></i>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul *dropdownMenu
+                                                class="dropdown-menu">
+                                                <li>
+                                                    <a (click)="createOrEditQuestion.show(record.id)"
+                                                       *ngIf="permission.isGranted('Pages.Questions.Edit')"
+                                                       href="javascript:;">
+                                                        {{'Edit' | localize}}
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a (click)="deleteQuestion(record.id)"
+                                                       *ngIf="permission.isGranted('Pages.Questions.Delete')"
+                                                       href="javascript:;">
+                                                        {{'Delete' | localize}}
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Label' | localize}}(BR)
+                                        </span>
+                                        {{record.labelBr}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Description' | localize}}(BR)
+                                        </span>
+                                        {{record.descriptionBr}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Label' | localize}}(EN)
+                                        </span>
+                                        {{record.labelEn}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Description' | localize}}(EN)
+                                        </span>
+                                        {{record.descriptionEn}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Label' | localize}}(ES)
+                                        </span>
+                                        {{record.labelEs}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Description' | localize}}(ES)
+                                        </span>
+                                        {{record.descriptionEs}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <div *ngIf="dataTableHelperQuestions.totalRecordsCount == 0"
+                             class="primeng-no-data">
+                            {{'NoData' | localize}}
+                        </div>
+                        <div class="primeng-paging-container">
+                            <p-paginator (onPageChange)="getAll($event)"
+                                         [rows]="dataTableHelperQuestions.defaultRecordsCountPerPage"
+                                         [rowsPerPageOptions]="dataTableHelperQuestions.predefinedRecordsCountPerPage"
+                                         [totalRecords]="dataTableHelperQuestions.totalRecordsCount"
+                                         #paginatorQuestions>
+                            </p-paginator>
+                            <span class="total-records-count">
+                                {{'TotalRecordsCount' | localize:dataTableHelperQuestions.totalRecordsCount}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <createOrEditQuestionsModal (modalSave)="reloadPage()"
+                                #createOrEditQuestion>
+    </createOrEditQuestionsModal>
+</div>

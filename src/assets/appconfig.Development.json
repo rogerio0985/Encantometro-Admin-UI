@@ -1,0 +1,10 @@
+﻿{
+  "remoteServiceBaseUrl": "https://dev-encantometro-api.voegol.cloud/admin",
+  "appBaseUrl": "https://dev-encantometro.voegol.cloud/admin",
+  "localeMappings": [
+    {
+      "from": "pt-BR",
+      "to": "pt"  
+    }
+  ]
+}

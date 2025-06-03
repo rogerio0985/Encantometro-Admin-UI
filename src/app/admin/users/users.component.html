@@ -1,0 +1,205 @@
+﻿<div [@routerTransition]>
+    <div class="m-subheader">
+        <div class="row align-items-center">
+            <div class="mr-auto col-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    <span>{{"Users" | localize}}</span>
+                </h3>
+                <span class="m-section__sub">
+                    {{"UsersHeaderInfo" | localize}}
+                </span>
+            </div>
+            <div class="col text-right mt-3 mt-md-0">
+                <button (click)="exportToExcel()" class="btn btn-success"><i class="far fa-file-excel"></i> {{"ExportToExcel" | localize}}</button>
+                <button (click)="createUser()" *ngIf="isGranted('Pages.Administration.Users.Create')" class="btn btn-primary"><i class="fa fa-plus"></i> {{"Create" | localize}}</button>
+            </div>
+        </div>
+    </div>
+    <div class="m-content">
+        <div class="m-portlet m-portlet--mobile">
+            <div class="m-portlet__body">
+                <form autocomplete="off" class="horizontal-form" >
+                    <div class="m-form m-form--label-align-right">
+                        <div class="row align-items-center m--margin-bottom-10">
+                            <div class="col-xl-12">
+                                <label>{{'Name' | localize}} / {{'UserName' | localize}}</label>
+                                <div class="input-group">
+                                    <input [(ngModel)]="filters.filterText" name="filterText" class="form-control m-input" [placeholder]="l('SearchWithThreeDot')" type="text">
+                                    <span class="input-group-btn">
+                                        <button (click)="getUsers()" class="btn btn-primary" type="submit"><i class="flaticon-search-1" [attr.aria-label]="l('Search')"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="align-items-center">
+
+                    <div class="primeng-datatable-container" [busyIf]="dataTableHelper.isLoading">
+                        <p-table #dataTable
+                                 (onLazyLoad)="getUsers($event)"
+                                 [value]="dataTableHelper.records"
+                                 rows="{{dataTableHelper.defaultRecordsCountPerPage}}"
+                                 [paginator]="false"
+                                 [lazy]="true"
+                                 [scrollable]="true"
+                                 ScrollWidth="100%"
+                                 [responsive]="dataTableHelper.isResponsive"
+                                 [resizableColumns]="dataTableHelper.resizableColumns">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 80px" [hidden]="!isGrantedAny('Pages.Administration.Users.Edit', 'Pages.Administration.Users.ChangePermissions', 'Pages.Administration.Users.Delete')">{{'Actions' | localize}}</th>
+                                    <th style="width: 140px" pSortableColumn="authenticationSource">
+                                        {{'AuthenticationSource' | localize}}
+                                        <p-sortIcon field="authenticationSource"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px" pSortableColumn="username">
+                                        {{'UserName' | localize}}
+                                        <p-sortIcon field="username"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px" pSortableColumn="name">
+                                        {{'Name' | localize}}
+                                        <p-sortIcon field="name"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px">
+                                        {{'Roles' | localize}}
+                                    </th>
+                                    <th style="width: 250px" pSortableColumn="emailAddress">
+                                        {{'EmailAddress' | localize}}
+                                        <p-sortIcon field="emailAddress"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 200px" pSortableColumn="isEmailConfirmed">
+                                        {{'EmailConfirmed' | localize}}
+                                        <p-sortIcon field="isEmailConfirmed"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="creationTime" style="width:160px">
+                                        {{'ModificationTime' | localize}}
+                                        <p-sortIcon field="creationTime"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="isActive" style="width:70px">
+                                        {{'Active' | localize}}
+                                        <p-sortIcon field="isActive"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-record="$implicit">
+                                <tr>
+                                    <td style="width: 80px" [hidden]="!isGrantedAny('Pages.Administration.Users.Edit', 'Pages.Administration.Users.ChangePermissions', 'Pages.Administration.Users.Delete')">
+                                        <div class="btn-group dropdown" dropdown container="body">
+                                            <button dropdownToggle class="dropdown-toggle btn btn-sm btn-primary">
+                                                <i class="fa fa-cog"></i><span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" *dropdownMenu>
+                                                <li>
+                                                    <a href="javascript:;" *ngIf="permission.isGranted('Pages.Administration.Users.Impersonation') && record.id !== appSession.userId"
+                                                        (click)="_impersonationService.impersonate(record.id, appSession.tenantId)">{{'LoginAsThisUser' | localize}}</a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" *ngIf="permission.isGranted('Pages.Administration.Users.ChangePermissions')"
+                                                        (click)="editUserPermissionsModal.show(record.id, record.userName)">{{'Permissions' | localize}}</a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" *ngIf="permission.isGranted('Pages.Administration.Users.ChangePermissions')"
+                                                        (click)="unlockUser(record)">{{'Unlock' | localize}}</a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" *ngIf="permission.isGranted('Pages.Administration.Users.ChangePermissions')"
+                                                        (click)="closeSessionUser(record)">{{'CloseSession' | localize}}</a>
+                                                </li>
+                                                <li >
+                                                    <a href="javascript:;" *ngIf="permission.isGranted('Pages.Administration.Users.Edit')"
+                                                       (click)="createOrEditUserModal.show(record.id, record.authenticationSource)">{{'Edit' | localize}}</a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="javascript:;" *ngIf="permission.isGranted('Pages.Administration.Users.Delete')"
+                                                       (click)="deleteUser(record)">{{'Delete' | localize}}</a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" *ngIf="entityHistoryEnabled"
+                                                        (click)="showHistory(record)">{{'History' | localize}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title"> {{'AuthenticationSource' | localize}}</span>
+                                        <span *ngIf="record.authenticationSource == undefined">
+                                           <span class="m-badge m-badge--light m-badge--wide">{{'SystemName' | localize}}</span>
+                                        </span>
+                                        <span *ngIf="record.authenticationSource == 'ActiveDirectory'">
+                                            <span class="m-badge m-badge--danger m-badge--wide">{{'ActiveDirectoryName' | localize}}</span>
+                                        </span>
+                                        <span *ngIf="record.authenticationSource == 'LDAP'">
+                                            <span class="m-badge m-badge--success m-badge--wide">{{'LDAP' | localize}}</span>
+                                        </span>
+                                        <span *ngIf="record.authenticationSource == 'Microsoft'">
+                                            <span class="m-badge m-badge--metal m-badge--wide">{{'Microsoft' | localize}}</span>
+                                        </span>
+                                        <span *ngIf="record.authenticationSource == 'Google'">
+                                            <span class="m-badge m-badge--brand m-badge--wide">{{'Google' | localize}}</span>
+                                        </span>
+                                        <span *ngIf="record.authenticationSource == 'OpenIdConnect'">
+                                            <span class="m-badge m-badge--warning m-badge--wide">{{'OpenIdConnect' | localize}}</span>
+                                        </span>
+                                    </td>
+                                    <td style="width: 150px">
+                                        <span class="ui-column-title"> {{'UserName' | localize}}</span>
+                                        {{record.userName}}
+                                    </td>
+                                    <td style="width: 150px">
+                                        <span class="ui-column-title"> {{'Name' | localize}}</span>
+                                        {{record.name}}
+                                    </td>
+                                    <td style="width: 150px">
+                                        <span class="ui-column-title"> {{'Roles' | localize}}</span>
+                                        {{getRolesAsString(record.roles)}}
+                                    </td>
+                                    <td style="width: 250px">
+                                        <span class="ui-column-title"> {{'EmailAddress' | localize}}</span>
+                                        {{record.emailAddress}}
+                                    </td>
+                                    <td style="width: 200px">
+                                        <span class="ui-column-title"> {{'EmailConfirmed' | localize}}</span>
+                                        <span *ngIf="record.isEmailConfirmed" class="m-badge m-badge--success m-badge--wide">{{'Yes' | localize}}</span>
+                                        <span *ngIf="!record.isEmailConfirmed" class="m-badge m-badge--metal m-badge--wide">{{'No' | localize}}</span>
+                                    </td>
+                                    <td style="width:160px">
+                                        <span class="ui-column-title">{{'ModificationTime' | localize}}</span>
+                                        {{record.lastModificationDate | momentFormat:'L LT'}}
+                                    </td>
+                                    <td style="width:70px">
+                                        <span class="ui-column-title">{{'Active' | localize}}</span>
+                                        <span *ngIf="record.isActive" class="m-badge m-badge--success m-badge--wide">{{'Yes' | localize}}</span>
+                                        <span *ngIf="!record.isActive" class="m-badge m-badge--metal m-badge--wide">{{'No' | localize}}</span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <div class="primeng-no-data" *ngIf="dataTableHelper.totalRecordsCount == 0">
+                            {{'NoData' | localize}}
+                        </div>
+                        <div class="primeng-paging-container">
+                            <p-paginator [rows]="dataTableHelper.defaultRecordsCountPerPage"
+                                         #paginator
+                                         (onPageChange)="getUsers($event)"
+                                         [totalRecords]="dataTableHelper.totalRecordsCount"
+                                         [rowsPerPageOptions]="dataTableHelper.predefinedRecordsCountPerPage">
+                            </p-paginator>
+                            <span class="total-records-count">
+                                {{'TotalRecordsCount' | localize:dataTableHelper.totalRecordsCount}}
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <createOrEditUserModal #createOrEditUserModal (modalSave)="reloadPage()"></createOrEditUserModal>
+    <editUserPermissionsModal #editUserPermissionsModal></editUserPermissionsModal>
+    <entityTypeHistoryModal #entityTypeHistoryModal></entityTypeHistoryModal>
+
+</div>

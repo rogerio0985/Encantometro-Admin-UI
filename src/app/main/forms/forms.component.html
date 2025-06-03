@@ -1,0 +1,341 @@
+<div [@routerTransition]>
+    <div class="m-subheader">
+        <div class="row align-items-center">
+            <div class="mr-auto col-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    <span>{{"FormsHeader" | localize}}</span>
+                </h3>
+                <span class="m-section__sub">
+                    {{"FormsHeaderInfo" | localize}}
+                </span>
+            </div>
+            <div class="col text-right mt-3 mt-md-0">
+                <button (click)="DeleteForms()"
+                        *ngIf="permission.isGranted('Pages.Forms.Delete')"
+                        [disabled]="ExibirBotaoExcluir()"
+                        name="deleteForms"
+                        class="btn btn-primary">
+                    <i class="fa fa-trash"></i>
+                    {{"Delete" | localize}}
+                </button>
+                <button (click)="createOrEditForms.show()"
+                        *ngIf="permission.isGranted('Pages.Forms.Create')"
+                        class="btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                    {{"Create" | localize}}
+                </button>
+                <button (click)="PrintSelected()"
+                        [disabled]="selectedItens == null || selectedItens.length <= 0"
+                        class="btn btn-success">
+                    <i class="fa fa-print"></i>
+                    {{"Print" | localize}}
+                </button>
+                <button (click)="QrSelected()"
+                        [disabled]="selectedItens == null || selectedItens.length <= 0"
+                        class="btn btn-success">
+                    <i class="fa fa-barcode"></i>
+                    {{"CreateQrCode" | localize}}
+                </button>
+                <button (click)="exportToExcel()"
+                        [disabled]="selectedItens == null || selectedItens.length <= 0"
+                        class="btn btn-success">
+                    <i class="far fa-file-excel"></i>
+                    {{"ExportToExcel" | localize}}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="m-content">
+        <div class="m-portlet m-portlet--mobile">
+            <div class="m-portlet__body">
+                <form autocomplete="off" class="horizontal-form">
+                    <div class="m-form m-form--label-align-right">
+                        <div class="row align-items-center m--margin-bottom-10">
+                            <div class="col-xl-12">
+                                <div class="row">
+                                    <div class="col-md-2"
+                                         style="padding-top: 10px;">
+                                        <label for="collaborator">
+                                            {{"Collaborator" | localize}}
+                                        </label>
+                                        <input [(ngModel)]="filters.collaborator"
+                                               class="form-control"
+                                               name="collaborator"
+                                               title="collaborator"
+                                               type="text" />
+                                    </div>
+                                    <div class="col-md-3"
+                                         style="padding-top: 10px;">
+                                        <label for="Base">
+                                            {{"Base" | localize}}
+                                        </label>
+                                        <br />
+                                        <p-autoComplete (completeMethod)="search($event)"
+                                                        [(ngModel)]="airportSelected"
+                                                        [suggestions]="airports"
+                                                        field="name"
+                                                        id="filtersBase"
+                                                        inputStyleClass="form-control"
+                                                        name="filtersBase">
+                                        </p-autoComplete>
+                                    </div>
+                                    <div class="col-md-2"
+                                         style="padding-top: 10px;">
+                                        <label for="typeId">
+                                            {{"TypeOfForms" | localize}}
+                                        </label>
+                                        <select [(ngModel)]="filters.typeId"
+                                                class="form-control"
+                                                name="typeId">
+                                            <option [value]="0" selected>
+                                                {{'ALL' | localize}}
+                                            </option>
+                                            <option [value]="type.id"
+                                                    *ngFor="let type of typeOfForms">
+                                                {{type.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2"
+                                         style="padding-top: 10px;">
+                                        <label for="dateStart">
+                                            {{"DateStart" | localize}}
+                                        </label>
+                                        <input [(ngModel)]="filters.dateStart"
+                                               [bsConfig]="{ isAnimated: true, dateInputFormat: 'DD/MM/YYYY' }"
+                                               bsDatepicker
+                                               class="form-control"
+                                               name="dateStart"
+                                               type="text" />
+                                    </div>
+                                    <div class="col-md-2"
+                                         style="padding-top: 10px;">
+                                        <label for="dateEnd">
+                                            {{"DateEnd" | localize}}
+                                        </label>
+                                        <input [(ngModel)]="filters.dateEnd"
+                                               [bsConfig]="{ isAnimated: true, dateInputFormat: 'DD/MM/YYYY' }"
+                                               bsDatepicker
+                                               class="form-control"
+                                               name="dateEnd"
+                                               type="text" />
+                                    </div>
+                                    <div class="col-md-1 justify-content-end"
+                                         style="padding-top: 10px;">
+                                        <label>&nbsp;</label>
+                                        <div class="form-group">
+                                            <button (click)="getAll()"
+                                                    class="btn btn-primary"
+                                                    type="submit">
+                                                <i [attr.aria-label]="l('Search')"
+                                                   class="flaticon-search-1">
+                                                </i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="align-items-center">
+                    <div [busyIf]="dataTableHelperForms.isLoading"
+                         class="primeng-datatable-container">
+                        <p-table (onLazyLoad)="getAll($event)"
+                                 [lazy]="true"
+                                 [paginator]="false"
+                                 [resizableColumns]="dataTableHelperForms.resizableColumns"
+                                 [responsive]="dataTableHelperForms.isResponsive"
+                                 [scrollable]="true"
+                                 [value]="dataTableHelperForms.records"
+                                 #dataTableForms
+                                 rows="{{dataTableHelperForms.defaultRecordsCountPerPage}}"
+                                 ScrollWidth="100%">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 20px">
+                                        <input (change)="onCheckboxAll($event)"
+                                               id="SelectedUsers_All"
+                                               name="SelectedUsers"
+                                               type="checkbox" />
+                                    </th>
+                                    <th pSortableColumn="Collaborator"
+                                        style="min-width: 140px">
+                                        {{'Collaborator' | localize}}
+                                        <p-sortIcon field="Collaborator">
+                                        </p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="adLogin"
+                                        style="min-width: 80px">
+                                        {{'Login' | localize}}
+                                        <p-sortIcon field="adLogin">
+                                        </p-sortIcon>
+                                    </th>
+
+                                    <th pSortableColumn="Base"
+                                        style="min-width: 100px">
+                                        {{'Base' | localize}}
+                                        <p-sortIcon field="Base"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="Date"
+                                        style="min-width: 130px">
+                                        {{'Date' | localize}}
+                                        <p-sortIcon field="Date"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="TypeOfForm.Name"
+                                        style="width: 160px">
+                                        {{'TypeOfForms' | localize}}
+                                        <p-sortIcon field="TypeOfForm.Name">
+                                        </p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="Quiz.Name"
+                                        style="min-width: 100px">
+                                        {{'Quiz' | localize}}
+                                        <p-sortIcon field="Quiz.Name">
+                                        </p-sortIcon>
+                                    </th>
+                                    <th style="width: 120px">
+                                        {{l('Actions')}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template let-record="$implicit"
+                                         pTemplate="body">
+                                <tr>
+                                    <th style="width: 20px">
+                                        <input (change)="onCheckboxChange($event, record.id)"
+                                               [checked]="isChecked(record.id)"
+                                               [value]="record.id"
+                                               *ngIf="record.enabled"
+                                               id="SelectedUsers_{{record.id}}"
+                                               name="SelectedUsers"
+                                               type="checkbox" />
+                                    </th>
+                                    <td style="min-width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Collaborator' | localize}}
+                                        </span>
+                                        {{record.collaborator}}
+                                    </td>
+                                    <td style="min-width: 80px">
+                                        <span class="ui-column-title">
+                                            {{'Collaborator' | localize}}
+                                        </span>
+                                        {{record.adLogin}}
+                                    </td>
+                                    <td style="min-width: 100px">
+                                        <span class="ui-column-title">
+                                            {{'Base' | localize}}
+                                        </span>
+                                        {{record.base}}
+                                    </td>
+                                    <td style="min-width: 130px">
+                                        <span class="ui-column-title">
+                                            {{'Date' | localize}}
+                                        </span>
+                                        {{record.date | date: 'dd/MM/yyyy'}} - {{record.dateEndNormalized | date: 'dd/MM/yyyy'}}
+                                    </td>
+                                    <td style="width: 160px">
+                                        <span class="ui-column-title">
+                                            {{'TypeOfForms' | localize}}
+                                        </span>
+                                        {{record.typeOfForm.name}}
+                                    </td>
+                                    <td style="min-width: 100px">
+                                        <span class="ui-column-title">
+                                            {{'Quiz' | localize}}
+                                        </span>
+                                        {{record.quiz.name}}
+                                    </td>
+                                    <td *ngIf="record.enableCreateQrCode && record.enabled"
+                                        style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Actions' | localize}}
+                                        </span>
+                                        <a (click)="createOrEditForms.Edit(record)"
+                                            *ngIf="permission.isGranted('Pages.Forms.Create')"
+                                           href="javascript:;">
+                                            {{'Edit' | localize}}
+                                        </a> |
+                                        <a (click)="CreateQrCode(record)"
+                                           href="javascript:;">
+                                            {{'CreateQrCode' | localize}}
+                                        </a> |
+                                        <a (click)="Delete(record.id)"
+                                            *ngIf="permission.isGranted('Pages.Forms.Create')"
+                                           href="javascript:;">
+                                            {{'Delete' | localize}}
+                                        </a>
+                                    </td>
+                                    <td *ngIf="!record.enableCreateQrCode && record.enabled"
+                                        style="width: 120px">
+                                        <span class="ui-column-title">
+                                            {{'Actions' | localize}}
+                                        </span>
+                                        <div aria-label="Actions"
+                                             class="btn-group btn-group-sm"
+                                             role="group">
+                                            <button (click)="PrintQrCode(record.id)"
+                                                    class="btn btn-primary btn-sm"
+                                                    data-placement="top"
+                                                    data-toggle="tooltip"
+                                                    title="Imprimir">
+                                                <i class="fa fa-print"></i>
+                                            </button>
+                                            <button (click)="OpenQrCode(record.id)"
+                                                    *ngIf="permission.isGranted('Pages.Forms.Delete')"
+                                                    class="btn btn-primary btn-sm"
+                                                    data-placement="top"
+                                                    data-toggle="tooltip"
+                                                    title="Qr Code">
+                                                <i class="fa fa-barcode"></i>
+                                            </button>
+                                            <button (click)="Delete(record.id)"
+                                                    *ngIf="permission.isGranted('Pages.Forms.Delete')"
+                                                    class="btn btn-primary btn-sm"
+                                                    data-placement="top"
+                                                    data-toggle="tooltip"
+                                                    title="Deletar">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td *ngIf="!record.enabled"
+                                        style="width: 120px">
+                                        <button (click)="History(record.id)"
+                                                class="btn btn-primary btn-sm"
+                                                data-placement="top"
+                                                data-toggle="tooltip"
+                                                title="Historico">
+                                            <i class="fa fa-list-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <div *ngIf="dataTableHelperForms.totalRecordsCount == 0"
+                             class="primeng-no-data">
+                            {{'NoData' | localize}}
+                        </div>
+                        <div class="primeng-paging-container">
+                            <p-paginator (onPageChange)="getAll($event)"
+                                         [rows]="dataTableHelperForms.defaultRecordsCountPerPage"
+                                         [rowsPerPageOptions]="dataTableHelperForms.predefinedRecordsCountPerPage"
+                                         [totalRecords]="dataTableHelperForms.totalRecordsCount"
+                                         #paginatorForms>
+                            </p-paginator>
+                            <span class="total-records-count">
+                                {{'TotalRecordsCount' | localize:dataTableHelperForms.totalRecordsCount}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<createOrEditFormsModal (modalSave)="reloadPage()"
+    #createOrEditForms>
+</createOrEditFormsModal>

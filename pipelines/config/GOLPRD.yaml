@@ -1,0 +1,4 @@
+variables:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  ASPNETCORE_URLS: "http://+:80"
+  DOTNET_URLS: "http://+:80"

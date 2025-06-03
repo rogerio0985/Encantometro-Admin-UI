@@ -1,0 +1,10 @@
+﻿{
+  "remoteServiceBaseUrl": "http://localhost:8001",
+  "appBaseUrl": "http://localhost:8000",
+  "localeMappings": [
+    {
+      "from": "pt-BR",
+      "to": "pt"  
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+a {
+    color: #FF7020 !important;
+}
+
+.ui-autocomplete {
+    width: 100%;
+    font-family: sans-serif, Arial;
+    border-color: #ebedf2;
+    color: #575962;
+}
+
+.ui-inputtext {
+    font-size: 13px !important;
+    border: 1px solid #ebedf2 !important;
+}

@@ -1,0 +1,275 @@
+﻿<!-- BEGIN: Topbar -->
+<div class="m-topbar m-stack m-stack--ver m-stack--general header-{{currentTheme.baseSettings.header.headerSkin}}"
+     id="m_header_topbar">
+    <nav [attr.aria-label]="l('TopMenu')"
+         class="m-stack__item m-topbar__nav-wrapper">
+        <ul aria-label="TopMenu"
+            class="m-topbar__nav m-nav m-nav--inline"
+            role="menubar">
+            <li *ngIf="languages.length > 1"
+                class="m-nav__item m-topbar__languages m-dropdown m-dropdown--small m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-{{currentTheme.baseSettings.header.headerSkin}} m-list-search--skin-{{currentTheme.baseSettings.header.headerSkin}}"
+                m-dropdown-toggle="click">
+                <a class="m-nav__link m-dropdown__toggle"
+                   href="javascript:;"
+                   style="padding: 15px">
+                    <span class="m-nav__link-text">
+                        <i [class]="currentLanguage.icon"></i>
+                        <span class="m-menu__link-text">
+                            {{currentLanguage.displayName}}
+                        </span>
+                        <i class="fa fa-angle-down"></i>
+                    </span>
+                </a>
+                <div class="m-dropdown__wrapper">
+                    <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust"
+                          style="color: #fff;">
+                    </span>
+                    <div class="m-dropdown__inner">
+                        <div class="m-dropdown__body">
+                            <div class="m-dropdown__content">
+                                <ul class="m-nav m-nav--skin-{{currentTheme.baseSettings.header.headerSkin}}">
+                                    <ng-container *ngFor="let language of languages">
+                                        <li [ngClass]="{'m-nav__item--active': language.active}"
+                                            class="m-nav__item">
+                                            <a (click)="changeLanguage(language.name)"
+                                               class="m-nav__link"
+                                               href="javascript:;">
+                                                <span class="m-nav__link-icon">
+                                                    <span class="m-nav__link-icon-wrapper">
+                                                        <i [class]="language.icon">
+                                                        </i>
+                                                    </span>
+                                                </span>
+                                                <span class="m-nav__link-title m-topbar__language-text m-nav__link-text-{{currentTheme.baseSettings.menu.asideSkin}}">
+                                                    {{language.displayName}}
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ng-container>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li adm-bar
+                class="m-nav__item m-dropdown m-dropdown--small m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-{{currentTheme.baseSettings.header.headerSkin}} m-list-search--skin-{{currentTheme.baseSettings.header.headerSkin}}"
+                id="header_adm_bar"
+                m-dropdown-toggle="click">
+            </li>
+
+            <li class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width"
+                data-dropdown-persistent="true"
+                headerNotifications
+                id="header_notification_bar"
+                m-dropdown-toggle="click">
+            </li>
+
+            <li *ngIf="showChatMenu"
+                class="m-nav__item m-topbar__user-profile m-topbar__user-profile--img m-dropdown m-dropdown--medium m-dropdown--arrow m-dropdown--header-bg-fill m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-light"
+                id="chat_is_connecting_icon">
+                <a [ngClass]="{ 'm--hide': !this.showChatMenu}"
+                   class="m-nav__link m-dropdown__toggle"
+                   data-toggle="offcanvas"
+                   href="javascript:;"
+                   id="kt_quick_sidebar_toggle"
+                   style="text-decoration: none;">
+                    <span *ngIf="unreadChatMessageCount"
+                          class="m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger">
+                    </span>
+                    <span class="m-nav__link-icon">
+                        <span *ngIf="!chatConnected"
+                              class="m-nav__link-icon-wrapper">
+                            <img *ngIf="!chatConnected"
+                                 placement="left"
+                                 src="./assets/common/images/loading.gif"
+                                 style="width: 23px;"
+                                 tooltip="{{'ChatIsConnecting' | localize}}" />
+                        </span>
+                        <span *ngIf="chatConnected"
+                              class="m-nav__link-icon-wrapper">
+                            <a (click)="showChat('chatSideRight')"
+                               class="m-brand__icon m-brand__toggler m-brand__toggler--left m--visible-desktop-inline-block ng-star-inserted pull-bs-canvas-right d-block text-primary text-decoration-none"
+                               href="javascript:;"
+                               style="text-decoration: none;">
+                                <div id="chatIcon">
+                                    <i class="flaticon-chat-2"></i>
+                                </div>
+                            </a>
+                        </span>
+                    </span>
+                </a>
+            </li>
+
+            <li class="m-nav__item m-topbar__user-profile m-topbar__user-profile--img m-dropdown m-dropdown--medium m-dropdown--arrow m-dropdown--header-bg-fill m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-light"
+                m-dropdown-toggle="click">
+                <a class="m-nav__link m-dropdown__toggle" href="javascript:;">
+                    <span class="m-nav__link-icon">
+                        <span class="m-nav__link-icon-wrapper">
+                            <i class="flaticon-profile-1"></i>
+                        </span>
+                    </span>
+                </a>
+                <div class="m-dropdown__wrapper">
+                    <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust">
+                    </span>
+                    <div class="m-dropdown__inner">
+                        <div [ngStyle]="{ 'background': 'url(' + appRootUrl() + 'assets/common/images/notification_bg.jpg)', 'background-size': 'cover'}"
+                             class="m-dropdown__header m--align-center">
+                            <div class="m-card-user m-card-user--skin-dark">
+                                <div class="m-card-user__pic">
+                                    <img [src]="profilePicture"
+                                         alt
+                                         class="header-profile-picture m--img-rounded m--marginless m--img-centered" />
+                                </div>
+                                <div class="m-card-user__details">
+                                    <span class="m-card-user__name m--font-weight-500">
+                                        {{shownFullName}} ({{shownLoginName}})
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-dropdown__body">
+                            <nav [attr.aria-label]="l('UserAccount')"
+                                 class="m-dropdown__content">
+                                <ul [attr.aria-label]="l('UserAccount')"
+                                    class="m-nav m-nav--skin-light"
+                                    role="menu">
+                                    <li *ngIf="isImpersonatedLogin"
+                                        class="m-nav__item"
+                                        role="none">
+                                        <a (click)="backToMyAccount()"
+                                           aria-expanded="false"
+                                           aria-haspopup="true"
+                                           class="m-nav__link"
+                                           href="javascript:;"
+                                           role="menuitem"
+                                           tabindex="-1">
+                                            <i class="m-nav__link-icon fa fa-reply m--font-danger">
+                                            </i>
+                                            <span class="m-nav__link-title">
+                                                <span class="m-nav__link-wrap">
+                                                    <span class="m-nav__link-text-{{currentTheme.baseSettings.menu.asideSkin}}"
+                                                          id="UserProfileBackToMyAccountButton">
+                                                        {{"BackToMyAccount" | localize}}
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li *ngIf="isImpersonatedLogin"
+                                        class="m-nav__separator m-nav__separator--fit"
+                                        role="none">
+                                    </li>
+
+                                    <li class="m-nav__separator m-nav__separator--fit"
+                                        role="none">
+                                    </li>
+                                    <li *ngIf="isSystemUser"
+                                        class="m-nav__item"
+                                        role="none">
+                                        <a (click)="changePassword()"
+                                           aria-expanded="false"
+                                           aria-haspopup="true"
+                                           class="m-nav__link"
+                                           href="javascript:;"
+                                           role="menuitem"
+                                           tabindex="-1">
+                                            <i class="m-nav__link-icon-{{currentTheme.baseSettings.menu.asideSkin}} flaticon-more-v6">
+                                            </i>
+                                            <span class="m-nav__link-title">
+                                                <span class="m-nav__link-wrap">
+                                                    <span class="m-nav__link-text-{{currentTheme.baseSettings.menu.asideSkin}}"
+                                                          id="UserProfileChangePasswordLink">
+                                                        {{"ChangePassword" | localize}}
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="m-nav__item" role="none">
+                                        <a (click)="showLoginAttempts()"
+                                           aria-expanded="false"
+                                           aria-haspopup="true"
+                                           class="m-nav__link"
+                                           href="javascript:;"
+                                           role="menuitem"
+                                           tabindex="-1">
+                                            <i class="m-nav__link-icon-{{currentTheme.baseSettings.menu.asideSkin}} flaticon-list">
+                                            </i>
+                                            <span class="m-nav__link-title">
+                                                <span class="m-nav__link-wrap">
+                                                    <span class="m-nav__link-text-{{currentTheme.baseSettings.menu.asideSkin}}"
+                                                          id="ShowLoginAttemptsLink">
+                                                        {{"LoginAttempts" | localize}}
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="m-nav__item" role="none">
+                                        <a (click)="changeProfilePicture()"
+                                           aria-expanded="false"
+                                           aria-haspopup="true"
+                                           class="m-nav__link"
+                                           href="javascript:;"
+                                           role="menuitem"
+                                           tabindex="-1">
+                                            <i class="m-nav__link-icon-{{currentTheme.baseSettings.menu.asideSkin}} flaticon-profile-1">
+                                            </i>
+                                            <span class="m-nav__link-title">
+                                                <span class="m-nav__link-wrap">
+                                                    <span class="m-nav__link-text-{{currentTheme.baseSettings.menu.asideSkin}}"
+                                                          id="UserProfileChangePictureLink">
+                                                        {{"ChangeProfilePicture" | localize}}
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="m-nav__item" role="none">
+                                        <a (click)="changeMySettings()"
+                                           aria-expanded="false"
+                                           aria-haspopup="true"
+                                           class="m-nav__link"
+                                           href="javascript:;"
+                                           role="menuitem"
+                                           tabindex="-1">
+                                            <i class="m-nav__link-icon-{{currentTheme.baseSettings.menu.asideSkin}} flaticon-cogwheel">
+                                            </i>
+                                            <span class="m-nav__link-title">
+                                                <span class="m-nav__link-wrap">
+                                                    <span class="m-nav__link-text-{{currentTheme.baseSettings.menu.asideSkin}}"
+                                                          id="UserProfileMySettingsLink">
+                                                        {{"MySettings" | localize}}
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="m-nav__separator m-nav__separator--fit"
+                                        role="none">
+                                    </li>
+                                    <li class="m-nav__item" role="none">
+                                        <a (click)="logout()"
+                                           aria-expanded="false"
+                                           aria-haspopup="true"
+                                           class="btn m-btn--pill btn-primary m-btn m-btn--custom m-btn--label-brand m-btn--bolder"
+                                           href="javascript:;"
+                                           role="menuitem"
+                                           style="color: #fff !important;"
+                                           tabindex="-1">
+                                            {{"Logout" | localize}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</div>
+<!-- END: Topbar -->

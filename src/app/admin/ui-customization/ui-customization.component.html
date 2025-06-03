@@ -1,0 +1,45 @@
+﻿<div [@routerTransition]>
+    <div class="m-subheader">
+        <div class="row align-items-center">
+            <div class="mr-auto col-sm-12 col-md-6">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    <span>{{"VisualSettings" | localize}}</span>
+                </h3>
+                <span class="m-section__sub">
+                    {{"UiCustomizationHeaderInfo" | localize}}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="m-content">
+        <div class="m-portlet m-portlet--mobile">
+            <div class="m-portlet__body">
+                <tabset class="tab-container tabbable-line" type="pills">
+                    <tab [active]="themeSetting.theme == currentThemeName"
+                         *ngFor="let themeSetting of themeSettings"
+                         customClass="m-tabs__item">
+                        <ng-template tabHeading>
+                            <img [src]="'assets/common/images/themes/' + themeSetting.theme +  '.png'"
+                                 alt="logo"
+                                 style="border: solid"
+                                 width="200" />
+                        </ng-template>
+
+                        <default-theme-ui-settings [settings]="themeSetting"
+                                                   *ngIf="themeSetting.theme == 'default'">
+                        </default-theme-ui-settings>
+                        <theme2-theme-ui-settings [settings]="themeSetting"
+                                                  *ngIf="themeSetting.theme == 'theme2'">
+                        </theme2-theme-ui-settings>
+                        <theme4-theme-ui-settings [settings]="themeSetting"
+                                                  *ngIf="themeSetting.theme == 'theme4'">
+                        </theme4-theme-ui-settings>
+                        <theme3-theme-ui-settings [settings]="themeSetting"
+                                                  *ngIf="themeSetting.theme == 'theme3'">
+                        </theme3-theme-ui-settings>
+                    </tab>
+                </tabset>
+            </div>
+        </div>
+    </div>
+</div>
