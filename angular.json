@@ -1,0 +1,137 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "gol-encantometro-ui": {
+      "root": "",
+      "sourceRoot": "src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "tsConfig": "src/tsconfig.json",
+            "polyfills": "src/polyfills.ts",
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json",
+            "aot": false,
+            "assets": [
+              "src/assets",
+              "src/web.config",
+              {
+                "glob": "eaf.signalr-client.js",
+                "input": "src/assets/lib/eaf-web-resources/Eaf/Framework/scripts/libs",
+                "output": "/assets/eaf"
+              },
+              "src/manifest.json"
+            ],
+            "styles": [
+              "node_modules/animate.css/animate.min.css",
+              "node_modules/quill/dist/quill.core.css",
+              "node_modules/quill/dist/quill.snow.css",
+              "node_modules/famfamfam-flags/dist/sprite/famfamfam-flags.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeng/resources/themes/nova-light/theme.css",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/sweetalert2/dist/sweetalert2.css",
+              "node_modules/cookieconsent/build/cookieconsent.min.css",
+              "node_modules/angular-calendar/css/angular-calendar.css",
+              "src/assets/lib/freezeUI/freeze-ui.min.css",
+              "src/assets/lib/primeng/file-upload/css/primeng.file-upload.css",
+              "src/assets/lib/primeng/autocomplete/css/primeng.autocomplete.css",
+              "src/assets/lib/primeng/tree/css/primeng.tree.css",
+              "src/assets/lib/primeng/context-menu/css/primeng.context-menu.css",
+              "src/assets/common/fonts/fonts-gol.css",
+              "src/assets/lib/ngx-bootstrap/bs-datepicker.css",
+              "src/assets/lib/metronic/assets/vendors/base/vendors.bundle.css",
+              "src/assets/common/styles/styles.css"
+            ],
+            "scripts": [
+              "node_modules/@microsoft/signalr/dist/browser/signalr.min.js",
+              "node_modules/localforage/dist/localforage.js",
+              "node_modules/moment/min/moment-with-locales.js",
+              "node_modules/moment-timezone/builds/moment-timezone-with-data.js",
+              "node_modules/push.js/bin/push.js",
+              "node_modules/quill/dist/quill.js",
+              "node_modules/sweetalert2/dist/sweetalert2.js",
+              "node_modules/cookieconsent/build/cookieconsent.min.js",
+              "node_modules/html2canvas/dist/html2canvas.min.js",
+              "node_modules/jspdf/dist/jspdf.min.js",
+              "src/assets/lib/freezeUI/freeze-ui.js",
+              "src/assets/lib/eaf-web-resources/eaf.js",
+              "src/assets/lib/eaf-web-resources/eaf.sweet-alert.js",
+              "src/assets/lib/eaf-web-resources/eaf.notify.js",
+              "src/assets/lib/eaf-web-resources/eaf.freeze-ui.js",
+              "src/assets/lib/eaf-web-resources/Eaf/Framework/scripts/libs/eaf.moment.js",
+              "src/assets/lib/metronic/assets/vendors/base/vendors.bundle.js",
+              "src/assets/lib/metronic/assets/vendors/base/scripts.bundle.js",
+              "src/assets/lib/eaf-web-resources/jquery.js",
+              "src/assets/lib/eaf-web-resources/functions.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "aot": true,
+              "baseHref": "/admin/",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.build.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "gol-encantometro-ui:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "gol-encantometro-ui:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "gol-encantometro-ui:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["src/tsconfig.json"],
+            "exclude": []
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "gol-encantometro-ui",
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "app",
+      "styleext": "css"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "app"
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}
