@@ -60,7 +60,7 @@
               "node_modules/sweetalert2/dist/sweetalert2.js",
               "node_modules/cookieconsent/build/cookieconsent.min.js",
               "node_modules/html2canvas/dist/html2canvas.min.js",
-              "node_modules/jspdf/dist/jspdf.min.js",
+              "node_modules/jspdf/dist/jspdf.umd.min.js",
               "src/assets/lib/freezeUI/freeze-ui.js",
               "src/assets/lib/eaf-web-resources/eaf.js",
               "src/assets/lib/eaf-web-resources/eaf.sweet-alert.js",

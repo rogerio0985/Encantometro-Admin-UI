@@ -105,14 +105,12 @@ function getDocumentOrigin() {
 
 function registerLocales(resolve: (value?: boolean | Promise<boolean>) => void, reject: any) {
     if (shouldLoadLocale()) {
-        let angularLocale = convertEafLocaleToAngularLocale(eaf.localization.currentLanguage.name);
-        import(`@angular/common/locales/${angularLocale}.js`)
-            .then(module => {
-                registerLocaleData(module.default);
-                NgxBootstrapDatePickerConfigService.registerNgxBootstrapDatePickerLocales().then(_ => {
-                    resolve(true);
-                });
-            }, reject);
+        // For now, skip dynamic locale loading to avoid build issues
+        // TODO: Implement static locale imports for supported languages
+        console.warn('Dynamic locale loading disabled for production build');
+        NgxBootstrapDatePickerConfigService.registerNgxBootstrapDatePickerLocales().then(_ => {
+            resolve(true);
+        });
     } else {
         NgxBootstrapDatePickerConfigService.registerNgxBootstrapDatePickerLocales().then(_ => {
             resolve(true);
