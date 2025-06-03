@@ -4,9 +4,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "lib": [ "es6", "dom", "es2018" ],
+    "lib": [ "es2018", "dom" ],
     "mapRoot": "./",
     "module": "esnext",
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
     "outDir": "../dist/out-tsc",
@@ -31,5 +32,5 @@
     "disableTypeScriptVersionCheck": true,
     "enableI18nLegacyMessageIdFormat": true,
     "trace": true
-  },
+  }
 }
