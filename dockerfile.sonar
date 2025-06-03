@@ -1,0 +1,25 @@
+FROM node:18.20-alpine3.19 AS ng-builder
+ARG TOKEN
+ARG URL
+ARG BRANCH
+ARG PROJECTKEY
+ARG PROJECTNAME
+ARG PROJECTVERSION
+ENV SONAR_SCANNER_OPTS=-Xmx1024m
+ENV NODE_OPTIONS=--max-old-space-size=4096
+
+RUN apk update
+RUN apk add git
+RUN apk add openjdk17
+
+RUN mkdir -p /app
+WORKDIR /app
+COPY package.json /app
+RUN npm install --force --legacy-peer-deps
+
+RUN npm install -g sonar-scanner --force
+RUN npm install -g sonarqube-scanner --force
+
+COPY . /app
+
+RUN npx sonarqube-scanner -Dsonar.token=$TOKEN -Dsonar.host.url=$URL -Dsonar.branch.name=$BRANCH -Dsonar.projectKey=$PROJECTKEY -Dsonar.projectName=$PROJECTNAME -Dsonar.projectVersion=$PROJECTVERSION
