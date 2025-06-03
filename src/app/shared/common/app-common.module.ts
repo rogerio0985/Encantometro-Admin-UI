@@ -43,6 +43,9 @@ import { KeyValueListManagerComponent } from './key-value-list-manager/key-value
         KeyValueListManagerComponent
     ],
     exports: [
+        ngCommon.CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
         TimeZoneComboComponent,
         CommonLookupModalComponent,
         EntityTypeHistoryModalComponent,
@@ -58,7 +61,7 @@ import { KeyValueListManagerComponent } from './key-value-list-manager/key-value
     ]
 })
 export class AppCommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<AppCommonModule> {
         return {
             ngModule: AppCommonModule,
             providers: [
