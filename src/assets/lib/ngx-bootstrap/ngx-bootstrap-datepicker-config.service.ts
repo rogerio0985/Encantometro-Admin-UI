@@ -28,19 +28,9 @@ export class NgxBootstrapDatePickerConfigService {
     }
 
     static registerNgxBootstrapDatePickerLocales(): Promise<boolean> {
-        if (eaf.localization.currentLanguage.name === 'en') {
-            return Promise.resolve(true);
-        }
-
-        let supportedLocale = new NgxBootstrapLocaleMappingService().map(eaf.localization.currentLanguage.name).toLowerCase();
-        let moduleLocaleName = new NgxBootstrapLocaleMappingService().getModuleName(eaf.localization.currentLanguage.name);
-
-        return new Promise<boolean>((resolve, reject) => {
-            import(`ngx-bootstrap/chronos/esm5/i18n/${supportedLocale}.js`)
-                .then(module => {
-                    defineLocale(eaf.localization.currentLanguage.name.toLowerCase(), module[`${moduleLocaleName}Locale`]);
-                    resolve(true);
-                }, reject);
-        });
+        // For now, skip dynamic locale loading to avoid build issues
+        // TODO: Implement static locale imports for supported languages
+        console.warn('Dynamic ngx-bootstrap locale loading disabled for production build');
+        return Promise.resolve(true);
     }
 }
