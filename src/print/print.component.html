@@ -1,0 +1,46 @@
+<div *ngFor="let page of pageItens" class="page">
+    <div *ngFor="let item of page" class="card">
+        <div class="box">
+            <img alt="logo"
+                 class="logo"
+                 src="assets/common/images/gol/gol-logo.svg" />
+            <p class="title">Como foi o atendimento de</p>
+            <p class="collaborator">
+                <strong>{{item.collaborator}}?</strong>
+            </p>
+            <p class="title-languages">
+                <span>How would you rate {{item.collaborator}}'s service?</span>
+                <br />
+                <span>¿Cómo fue el atendimiento de {{item.collaborator}}?</span>
+            </p>
+            <div class="row qrCode">
+                <div class="col-6 tip">
+                    <p class="tip-1">
+                        Aponte a câmera do celular e avalie rapidamente
+                    </p>
+                    <p class="tip-2">
+                        Point your phone camera
+                        <br />and do it quickly
+                    </p>
+                    <p class="tip-2">
+                        Apunte la cámara del celular
+                        <br />y evalúe rapidamente
+                    </p>
+                </div>
+                <div class="col-6"
+                     style="margin: 0; padding: 0; text-align: right;">
+                    <img alt="QrCode"
+                         class="qrCodeImg"
+                         src="data:image/png;base64,{{item.qrCodeImage}}" />
+                </div>
+                <div>
+                    <img class="smartphone-icon"
+                         src="assets/common/images/smartphone-icon.png" />
+                </div>
+            </div>
+            <div style="text-align: left;font-size: 10pt;margin-top: 20px;color: gray;">
+                <span>{{item.adLogin}}</span>
+            </div>
+        </div>
+    </div>
+</div>

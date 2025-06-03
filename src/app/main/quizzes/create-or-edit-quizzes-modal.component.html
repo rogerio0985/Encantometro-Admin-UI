@@ -1,0 +1,86 @@
+﻿<div bsModal #createOrEditModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form *ngIf="active" #quizForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <span *ngIf="quiz.id">{{l("EditQuiz")}}</span>
+                        <span *ngIf="!quiz.id">{{l("CreateNewQuiz")}}</span>
+                    </h4>
+                    <button type="button" class="close" (click)="close()" aria-label="Close" [disabled]="saving">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">{{l("Name")}}</label>
+                        <input type="text" id="name" class="form-control" [(ngModel)]="quiz.name" name="name" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">{{l("Description")}}</label>
+                        <textarea rows="3" id="description" class="form-control" [(ngModel)]="quiz.description" name="description"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="validityStart">{{"ValidityStart" | localize}}</label>
+                                <input type="text" class="form-control" bsDatepicker placement="top" [bsConfig]="{ isAnimated: true, dateInputFormat: 'DD/MM/YYYY' }" [(ngModel)]="validityStart" name="validityStart" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="validityEnd">{{"ValidityEnd" | localize}}</label>
+                                <input type="text" class="form-control" bsDatepicker placement="top" [minDate]="quiz.validityStart" [bsConfig]="{ isAnimated: true, dateInputFormat: 'DD/MM/YYYY' }" [(ngModel)]="validityEnd" name="ValidityEnd" />
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <table class="ui-table-scrollable-header-table col-md-12" style="border: 1px solid;">
+                                    <thead class="ui-table-thead" style="background-color: #e0e0e0;">
+                                        <tr class="grid-name">
+                                            <td class="HeadTitle col-xl-12">Perguntas Disponíveis</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="ui-table-tbody">
+                                        <tr *ngFor="let item of questionNoSelectedList">
+                                            <td class="col-xl-12 on-hover">
+                                                <em style="cursor: pointer;" (click)="selectedItem(item.id)">{{item.labelBr}}</em>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <table class="ui-table-scrollable-header-table col-md-12" style="border: 1px solid;">
+                                    <thead class="ui-table-thead" style="background-color: #e0e0e0;">
+                                        <tr class="grid-name">
+                                            <td class="HeadTitle col-xl-12">Perguntas Selecionadas</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="ui-table-tbody">
+                                        <tr *ngFor="let item of quiz.itens">
+                                            <td class="col-xl-12 on-hover" style="width: 80px">
+                                                <em style="cursor: pointer;" (click)="deSelectedItem(item.questionId)">{{item.order}}-{{item.question.labelBr}}</em>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
+                    <button type="submit" class="btn btn-primary blue" [disabled]="(!quizForm.form.valid || this.disabledSave())" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

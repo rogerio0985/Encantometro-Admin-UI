@@ -1,0 +1,216 @@
+<div (onShown)="onShown()"
+     [config]="{backdrop: 'static'}"
+     #createOrEditModal="bs-modal"
+     aria-hidden="true"
+     aria-labelledby="createOrEditFormsModal"
+     bsModal
+     class="modal fade"
+     role="dialog"
+     tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form (ngSubmit)="save()"
+                  *ngIf="active"
+                  #Forms="ngForm"
+                  autocomplete="off"
+                  novalidate>
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <span>{{l("CreateForms")}}</span>
+                    </h4>
+                    <button (click)="close()"
+                            [disabled]="saving"
+                            aria-label="Close"
+                            class="close"
+                            type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6" style="padding-top: 10px;">
+                            <label for="collaborator">
+                                {{"LdapUser" | localize}}
+                            </label>
+                            <input [(ngModel)]="filterLdap.name"
+                                   [readonly]="formDto != null && formDto.adLogin != null"
+                                   class="form-control"
+                                   maxlength="30"
+                                   minlength="3"
+                                   name="collaborator"
+                                   title="collaborator"
+                                   type="text" />
+                        </div>
+                        <div class="col-md-2" style="padding-top: 10px;">
+                            <label>&nbsp;</label>
+                            <div class="form-group">
+                                <button (click)="FindUsers()"
+                                        [disabled]="filterLdap.name == '' || filterLdap.name.length <= 3 || (formDto != null && formDto.adLogin != null)"
+                                        class="btn btn-primary"
+                                        type="button">
+                                    <i [attr.aria-label]="l('Search')"
+                                       class="flaticon-search-1">
+                                    </i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="ldapUsers != null && ldapUsers.length > 0"
+                         class="row">
+                        <div class="align-items-center">
+                            <div [busyIf]="dataTableHelperForms.isLoading"
+                                 class="primeng-datatable-container">
+                                <p-table [lazy]="true"
+                                         [paginator]="false"
+                                         [resizableColumns]="dataTableHelperForms.resizableColumns"
+                                         [responsive]="dataTableHelperForms.isResponsive"
+                                         [scrollable]="true"
+                                         [value]="ldapUsers"
+                                         rows="10"
+                                         ScrollWidth="100%">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>
+                                                {{"SamAccountName" | localize}}
+                                            </th>
+                                            <th>
+                                                {{"DisplayName" | localize}}
+                                            </th>
+                                            <th>{{"GivenName" | localize}}</th>
+                                            <th>{{"Surname" | localize}}</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template let-record="$implicit"
+                                                 pTemplate="body">
+                                        <tr>
+                                            <th>
+                                                <a (click)="SelectedLdapUser(record)"
+                                                   href="javascript:;">
+                                                    {{record.samAccountName}}
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a (click)="SelectedLdapUser(record)"
+                                                   href="javascript:;">
+                                                    {{record.displayName}}
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a (click)="SelectedLdapUser(record)"
+                                                   href="javascript:;">
+                                                    {{record.givenName}}
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a (click)="SelectedLdapUser(record)"
+                                                   href="javascript:;">
+                                                    {{record.surname}}
+                                                </a>
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                                <div *ngIf="ldapUsers == null || ldapUsers.length <= 0"
+                                     class="primeng-no-data">
+                                    {{'NoData' | localize}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="formDto != null" class="row">
+                        <div class="col-md-7" style="padding-top: 10px;">
+                            <label for="collaborator">
+                                {{"NameQrCode" | localize}} <b style="color: #FF7020;">({{"AccordingBadge" | localize}})</b>
+                            </label>
+                            <input [(ngModel)]="formDto.collaborator"
+                                   class="form-control"
+                                   maxlength="30"
+                                   minlength="3"
+                                   name="collaborator"
+                                   required
+                                   title="collaborator"
+                                   type="text" />
+                        </div>
+
+                        <div class="col-md-5" style="padding-top: 10px;">
+                            <label for="typeId">
+                                {{"TypeOfForms" | localize}}
+                            </label>
+                            <select [(ngModel)]="formDto.typeOfForm.id"
+                                    class="form-control"
+                                    name="typeId"
+                                    required>
+                                <option [value]="0" selected>
+                                    {{'Select' | localize}}
+                                </option>
+                                <option [value]="type.id"
+                                        *ngFor="let type of typeOfForms">
+                                    {{type.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div *ngIf="formDto != null" class="row">
+                        <div class="col-md-12" style="padding-top: 10px;">
+                            <label for="Quiz">{{"Quiz" | localize}}</label>
+                            <select [(ngModel)]="formDto.quiz.id"
+                                    class="form-control"
+                                    name="quizId"
+                                    required>
+                                <option [value]="0" selected>
+                                    {{'Select' | localize}}
+                                </option>
+                                <option [value]="type.id"
+                                        *ngFor="let type of QuizArray">
+                                    {{type.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div *ngIf="formDto != null" class="row">
+                        <div class="col-md-6" style="padding-top: 10px;">
+                            <label for="Base">{{"Base" | localize}}</label>
+                            <br />
+                            <p-autoComplete (completeMethod)="search($event)"
+                                            [(ngModel)]="airportSelected"
+                                            [suggestions]="airports"
+                                            aria-required="true"
+                                            field="name"
+                                            id="formDto.base"
+                                            inputStyleClass="form-control"
+                                            name="formDto.base">
+                            </p-autoComplete>
+                        </div>
+                        <div class="col-md-2" style="padding-top: 10px;"></div>
+                        <div class="col-md-4" style="padding-top: 10px;">
+                            <label for="Date">{{"DateEnd" | localize}}</label>
+                            <input [(ngModel)]="selectedDateEnd"
+                                   [bsConfig]="{ isAnimated: true, adaptivePosition: true, dateInputFormat: 'DD/MM/YYYY' }"
+                                   bsDatepicker
+                                   class="form-control bs-datepicker-container2"
+                                   name="Date"
+                                   required
+                                   type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button (click)="close()"
+                            [disabled]="saving"
+                            class="btn btn-default"
+                            type="button">
+                        {{l("Cancel")}}
+                    </button>
+                    <button [busyText]="l('SavingWithThreeDot')"
+                            [buttonBusy]="saving"
+                            [disabled]="!Forms.form.valid || formDto == null || formDto.collaborator == null || airportSelected == null"
+                            class="btn btn-primary blue"
+                            type="submit">
+                        <i class="fa fa-save"></i>
+                        <span>{{l("Save")}}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

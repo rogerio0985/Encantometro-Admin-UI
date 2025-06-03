@@ -1,0 +1,226 @@
+<div [@routerTransition]>
+    <div class="m-subheader">
+        <div class="row align-items-center">
+            <div class="mr-auto col-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    <span>{{"Services" | localize}}</span>
+                </h3>
+                <span class="m-section__sub">
+                    {{"ServicesHeaderInfo" | localize}}
+                </span>
+            </div>
+            <div class="col text-right mt-3 mt-md-0">
+                <button (click)="show()"
+                        *ngIf="permission.isGranted('Pages.Forms.Type.Create')"
+                        class="btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                    {{"Create" | localize}}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="m-content">
+        <div class="m-portlet m-portlet--mobile">
+            <div class="m-portlet__body">
+                <form autocomplete="off" class="horizontal-form">
+                    <div class="m-form m-form--label-align-right">
+                        <div class="row align-items-center m--margin-bottom-10">
+                            <div class="col-xl-12">
+                                <div class="row">
+                                    <div class="col-md-10"
+                                         style="padding-top: 10px;">
+                                        <label for="description">
+                                            {{"Description" | localize}}
+                                        </label>
+                                        <input [(ngModel)]="filters.description"
+                                               class="form-control"
+                                               name="Description"
+                                               type="text" />
+                                    </div>
+
+                                    <div class="col-md-2"
+                                         style="padding-top: 10px;">
+                                        <label>&nbsp;</label>
+                                        <div class="form-group">
+                                            <button (click)="getAll()"
+                                                    class="btn btn-primary"
+                                                    type="submit">
+                                                <i [attr.aria-label]="l('Search')"
+                                                   class="flaticon-search-1">
+                                                </i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="align-items-center">
+                    <div [busyIf]="dataTableHelperService.isLoading"
+                         class="primeng-datatable-container">
+                        <p-table (onLazyLoad)="getAll($event)"
+                                 [lazy]="true"
+                                 [paginator]="false"
+                                 [resizableColumns]="dataTableHelperService.resizableColumns"
+                                 [responsive]="dataTableHelperService.isResponsive"
+                                 [scrollable]="true"
+                                 [value]="dataTableHelperService.records"
+                                 #dataTableService
+                                 rows="{{dataTableHelperService.defaultRecordsCountPerPage}}"
+                                 ScrollWidth="100%">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th [hidden]="!isGrantedAny('Pages.Forms.Type.Create')"
+                                        style="width: 80px">
+                                        {{l('Actions')}}
+                                    </th>
+                                    <th pSortableColumn="name"
+                                        style="min-width: 250px">
+                                        {{'Name' | localize}}(BR)
+                                        <p-sortIcon field="name"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="disabled"
+                                        style="width: 140px">
+                                        {{'Inativo?' | localize}}
+                                        <p-sortIcon field="disabled">
+                                        </p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template let-record="$implicit"
+                                         pTemplate="body">
+                                <tr>
+                                    <td style="width: 80px">
+                                        <div class="btn-group dropdown"
+                                             container="body"
+                                             dropdown>
+                                            <button class="dropdown-toggle btn btn-sm btn-primary"
+                                                    dropdownToggle>
+                                                <i class="fa fa-cog"></i>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul *dropdownMenu
+                                                class="dropdown-menu">
+                                                <li>
+                                                    <a (click)="EnableOrDisable(record.id)"
+                                                       *ngIf="permission.isGranted('Pages.Forms.Type.Create') && record.disabled"
+                                                       href="javascript:;">
+                                                        {{'Ativar' | localize}}
+                                                    </a>
+                                                    <a (click)="EnableOrDisable(record.id)"
+                                                       *ngIf="permission.isGranted('Pages.Forms.Type.Create') && !record.disabled"
+                                                       href="javascript:;">
+                                                        {{'Inativar' | localize}}
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td style="min-width: 250px">
+                                        <span class="ui-column-title">
+                                            {{'Name' | localize}}
+                                        </span>
+                                        {{record.name}}
+                                    </td>
+                                    <td *ngIf="record.disabled"
+                                        style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Disabled' | localize}}
+                                        </span>
+                                        {{'SIM' | localize}}
+                                    </td>
+                                    <td *ngIf="!record.disabled"
+                                        style="width: 140px">
+                                        <span class="ui-column-title">
+                                            {{'Disabled' | localize}}
+                                        </span>
+                                        {{'NÃO' | localize}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <div *ngIf="dataTableHelperService.totalRecordsCount == 0"
+                             class="primeng-no-data">
+                            {{'NoData' | localize}}
+                        </div>
+                        <div class="primeng-paging-container">
+                            <p-paginator (onPageChange)="getAll($event)"
+                                         [rows]="dataTableHelperService.defaultRecordsCountPerPage"
+                                         [rowsPerPageOptions]="dataTableHelperService.predefinedRecordsCountPerPage"
+                                         [totalRecords]="dataTableHelperService.totalRecordsCount"
+                                         #paginatorService>
+                            </p-paginator>
+                            <span class="total-records-count">
+                                {{'TotalRecordsCount' | localize:dataTableHelperService.totalRecordsCount}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div (onShown)="onShown()"
+     [config]="{backdrop: 'static'}"
+     #createOrEditModal="bs-modal"
+     aria-hidden="true"
+     aria-labelledby="createOrEditModal"
+     bsModal
+     class="modal fade"
+     role="dialog"
+     tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form (ngSubmit)="save()"
+                  *ngIf="active"
+                  #TypeOfForm="ngForm"
+                  autocomplete="off"
+                  novalidate>
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <span>{{l("CreateNewTypeOfService")}}</span>
+                    </h4>
+                    <button (click)="close()"
+                            [disabled]="saving"
+                            aria-label="Close"
+                            class="close"
+                            type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">{{l("Name")}}</label>
+                        <input [(ngModel)]="typeOfFormDto.name"
+                               class="form-control"
+                               id="name"
+                               maxlength="100"
+                               minlength="2"
+                               name="name"
+                               required
+                               type="text" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button (click)="close()"
+                            [disabled]="saving"
+                            class="btn btn-default"
+                            type="button">
+                        {{l("Cancel")}}
+                    </button>
+                    <button [busyText]="l('SavingWithThreeDot')"
+                            [buttonBusy]="saving"
+                            [disabled]="!TypeOfForm.form.valid"
+                            class="btn btn-primary blue"
+                            type="submit">
+                        <i class="fa fa-save"></i>
+                        <span>{{l("Save")}}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,387 @@
+﻿<div (onShown)="onShown()"
+     [config]="{backdrop: 'static'}"
+     #createOrEditModal="bs-modal"
+     aria-hidden="true"
+     aria-labelledby="createOrEditModal"
+     bsModal
+     class="modal fade"
+     role="dialog"
+     tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form (ngSubmit)="save()"
+                  *ngIf="active"
+                  #questionForm="ngForm"
+                  autocomplete="off"
+                  novalidate>
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <span *ngIf="question.id">{{l("EditQuestion")}}</span>
+                        <span *ngIf="!question.id">
+                            {{l("CreateNewQuestion")}}
+                        </span>
+                    </h4>
+                    <button (click)="close()"
+                            [disabled]="saving"
+                            aria-label="Close"
+                            class="close"
+                            type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <tabset class="tab-container tabbable-line">
+                        <tab customClass="m-tabs__item" heading="Português">
+                            <div class="form-group">
+                                <label for="labelBr">
+                                    {{l("Label")}} (BR)*
+                                </label>
+                                <input [(ngModel)]="question.labelBr"
+                                       class="form-control"
+                                       id="labelBr"
+                                       name="labelBr"
+                                       required
+                                       type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label for="descriptionBr">
+                                    {{l("Description")}} (BR)
+                                </label>
+                                <textarea [(ngModel)]="question.descriptionBr"
+                                          class="form-control"
+                                          id="descriptionBr"
+                                          name="descriptionBr"
+                                          rows="3">
+                                </textarea>
+                            </div>
+                        </tab>
+                        <tab customClass="m-tabs__item" heading="Inglês">
+                            <div class="form-group">
+                                <label for="labelEn">{{l("Label")}} (EN)</label>
+                                <input [(ngModel)]="question.labelEn"
+                                       class="form-control"
+                                       id="labelEn"
+                                       name="labelEn"
+                                       type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label for="descriptionEn">
+                                    {{l("Description")}} (EN)
+                                </label>
+                                <textarea [(ngModel)]="question.descriptionEn"
+                                          class="form-control"
+                                          id="descriptionEn"
+                                          name="descriptionEn"
+                                          rows="3">
+                                </textarea>
+                            </div>
+                        </tab>
+                        <tab customClass="m-tabs__item" heading="Espanhol">
+                            <div class="form-group">
+                                <label for="labelEs">{{l("Label")}} (ES)</label>
+                                <input [(ngModel)]="question.labelEs"
+                                       class="form-control"
+                                       id="labelEs"
+                                       name="labelEs"
+                                       type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label for="descriptionEs">
+                                    {{l("Description")}} (ES)
+                                </label>
+                                <textarea [(ngModel)]="question.descriptionEs"
+                                          class="form-control"
+                                          id="descriptionEs"
+                                          name="descriptionEs"
+                                          rows="3">
+                                </textarea>
+                            </div>
+                        </tab>
+                    </tabset>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="m-switch m-switch--icon-check">
+                                <label>
+                                    <input [(ngModel)]="question.required"
+                                           class="md-check"
+                                           id="required"
+                                           name="required"
+                                           type="checkbox" />
+                                    <span></span>
+                                    <label class="m-switch-label">
+                                        {{"Required" | localize}}
+                                    </label>
+                                </label>
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="typeOf">{{"TypeOf" | localize}}</label>
+                            <select [(ngModel)]="question.typeOf"
+                                    class="form-control"
+                                    id="typeOf"
+                                    name="typeOf">
+                                <option [value]="item.key"
+                                        *ngFor="let item of questionType">
+                                    {{item.value}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div *ngIf="(question.typeOf == 0 || question.typeOf ==5)"
+                         class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="minLength">
+                                    {{"MinLength" | localize}}
+                                </label>
+                                <input [(ngModel)]="question.minLength"
+                                       class="form-control"
+                                       name="minLength"
+                                       type="text" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="maxLength">
+                                    {{"MaxLength" | localize}}
+                                </label>
+                                <input [(ngModel)]="question.maxLength"
+                                       class="form-control"
+                                       name="maxLength"
+                                       type="text" />
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="(question.typeOf == 2)" class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="minNum">
+                                    {{"MinNum" | localize}}
+                                </label>
+                                <input [(ngModel)]="question.minNum"
+                                       class="form-control"
+                                       name="minNum"
+                                       type="text" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="maxNum">
+                                    {{"MaxNum" | localize}}
+                                </label>
+                                <input [(ngModel)]="question.maxNum"
+                                       class="form-control"
+                                       name="maxNum"
+                                       type="text" />
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="(question.typeOf == 1)" class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="minDate">
+                                    {{"MinDate" | localize}}
+                                </label>
+                                <input [(ngModel)]="question.minDate"
+                                       [bsConfig]="{ isAnimated: true, dateInputFormat: 'DD/MM/YYYY' }"
+                                       bsDatepicker
+                                       class="form-control"
+                                       name="minDate"
+                                       placement="top"
+                                       type="text" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="maxDate">
+                                    {{"MaxDate" | localize}}
+                                </label>
+                                <input [(ngModel)]="question.maxDate"
+                                       [bsConfig]="{ isAnimated: true, dateInputFormat: 'DD/MM/YYYY' }"
+                                       [minDate]="question.minDate"
+                                       bsDatepicker
+                                       class="form-control"
+                                       name="maxDate"
+                                       placement="top"
+                                       type="text" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <span *ngIf="(question.typeOf==3 || question.typeOf==4 || question.typeOf==6)"
+                          style="font-weight: bold">
+                        <em (click)="inserirItem()"
+                            class="fa fa-plus"
+                            style="cursor: pointer;">
+                            Adicionar Itens
+                        </em>
+                        <hr />
+                    </span>
+                    <div *ngIf="(question.typeOf==3 || question.typeOf==4 || question.typeOf==6) && (addItem==true)"
+                         class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="labelItemBr">
+                                    {{l("Label")}} (BR)*
+                                </label>
+                                <input [(ngModel)]="questionItem.labelBr"
+                                       class="form-control"
+                                       id="labelItemBr"
+                                       name="labelItemBr"
+                                       type="text" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="labelItemEn">
+                                    {{l("Label")}} (EN)
+                                </label>
+                                <input [(ngModel)]="questionItem.labelEn"
+                                       class="form-control"
+                                       id="labelItemEn"
+                                       name="labelItemEn"
+                                       type="text" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="labelItemEs">
+                                    {{l("Label")}} (ES)
+                                </label>
+                                <input [(ngModel)]="questionItem.labelEs"
+                                       class="form-control"
+                                       id="labelItemEs"
+                                       name="labelItemEs"
+                                       type="text" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="labelItemorder">
+                                    {{l("Order")}}
+                                </label>
+                                <select [(ngModel)]="questionItem.order"
+                                        class="form-control"
+                                        id="labelItemorder"
+                                        name="labelItemorder">
+                                    <option [value]="1">1</option>
+                                    <option [value]="2">2</option>
+                                    <option [value]="3">3</option>
+                                    <option [value]="4">4</option>
+                                    <option [value]="5">5</option>
+                                    <option [value]="6">6</option>
+                                    <option [value]="7">7</option>
+                                    <option [value]="8">8</option>
+                                    <option [value]="9">9</option>
+                                    <option [value]="10">10</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-1" style="margin-top: 38px;">
+                            <div class="form-group">
+                                <span>&nbsp;</span>
+                                <em (click)="saveItem()"
+                                    class="fa fa-save"
+                                    style="cursor: pointer;">
+                                </em>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="question.itens!=undefined && question.itens.length > 0"
+                         class="row">
+                        <div class="m-section__content col-xl-12">
+                            <div [busyIf]="mainDataTableHelper.isLoading"
+                                 class="table-responsive">
+                                <div class="col-xl-12">
+                                    <table class="ui-table-scrollable-header-table col-xl-12">
+                                        <thead class="ui-table-thead"
+                                               style="background-color: #e0e0e0;">
+                                            <tr class="grid-name">
+                                                <td class="col-md-1">&nbsp;</td>
+                                                <td class="col-md-3">
+                                                    {{l('label')}}(BR)
+                                                </td>
+                                                <td class="col-md-3">
+                                                    {{l('label')}}(ES)
+                                                </td>
+                                                <td class="col-md-3">
+                                                    {{l('label')}}(EN)
+                                                </td>
+                                                <td class="col-md-2">
+                                                    {{l('Order')}}
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="ui-table-tbody">
+                                            <tr *ngFor="let item of orderByItens(question.itens)">
+                                                <td class="col-md-1"
+                                                    style="width: 80px">
+                                                    <tr>
+                                                        <td>
+                                                            <span class="HeadTitle">
+                                                                <em (click)="deletarItem(item.id)"
+                                                                    class="fa fa-trash"
+                                                                    style="cursor: pointer;">
+                                                                </em>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="HeadTitle">
+                                                                <em (click)="editarItem(item.id)"
+                                                                    class="fa fa-edit"
+                                                                    style="cursor: pointer;">
+                                                                </em>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </td>
+                                                <td class="col-md-3">
+                                                    <span class="HeadTitle">
+                                                        {{item.labelBr}}
+                                                    </span>
+                                                </td>
+                                                <td class="col-md-3">
+                                                    <span class="HeadTitle">
+                                                        {{item.labelEs}}
+                                                    </span>
+                                                </td>
+                                                <td class="col-md-3">
+                                                    <span class="HeadTitle">
+                                                        {{item.labelEn}}
+                                                    </span>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <span class="HeadTitle">
+                                                        {{item.order}}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button (click)="close()"
+                            [disabled]="saving"
+                            class="btn btn-default"
+                            type="button">
+                        {{l("Cancel")}}
+                    </button>
+                    <button [busyText]="l('SavingWithThreeDot')"
+                            [buttonBusy]="saving"
+                            [disabled]="!questionForm.form.valid"
+                            class="btn btn-primary blue"
+                            type="submit">
+                        <i class="fa fa-save"></i>
+                        <span>{{l("Save")}}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

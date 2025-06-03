@@ -1,0 +1,147 @@
+<div [@routerTransition]>
+    <div class="m-subheader">
+        <div class="row align-items-center">
+            <div class="mr-auto col-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    <span>{{"Quizzes" | localize}}</span>
+                </h3>
+                <span class="m-section__sub">
+                    {{"QuizzesHeaderInfo" | localize}}
+                </span>
+            </div>
+            <div class="col text-right mt-3 mt-md-0">
+                <button *ngIf="permission.isGranted('Pages.Quizzes.Create')" (click)="createOrEditQuiz.show()" class="btn btn-primary"><i class="fa fa-plus"></i> {{"Create" | localize}}</button>
+                <!--<button hidden="true" (click)="exportToExcel()" class="btn btn-success"><i class="far fa-file-excel"></i> {{"ExportToExcel" | localize}}</button>-->
+            </div>
+        </div>
+    </div>
+    <div class="m-content">
+        <div class="m-portlet m-portlet--mobile">
+            <div class="m-portlet__body">
+                <form autocomplete="off" class="horizontal-form" >
+                    <div class="m-form m-form--label-align-right">
+                        <div class="row align-items-center m--margin-bottom-10 ">
+                            <div class="col-xl-12">
+                                <div class="row">
+                                    <div class="col-md-10" style="padding-top: 10px;">
+                                        <label for="description">{{"Description" | localize}}</label>
+                                        <input type="text"
+                                            name="Description"
+                                            class="form-control"
+                                            [(ngModel)]="searchQuiz.name" />
+                                    </div>
+
+                                    <div class="col-md-2" style="padding-top: 10px;">
+                                        <label>&nbsp;</label>
+                                        <div class="form-group">
+                                            <button (click)="getAll()" class="btn btn-primary" type="submit"><i class="flaticon-search-1" [attr.aria-label]="l('Search')"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="align-items-center">
+
+                    <div class="primeng-datatable-container" [busyIf]="dataTableHelperQuiz.isLoading">
+                        <p-table #dataTableQuiz
+                                 (onLazyLoad)="getAll($event)"
+                                 [value]="dataTableHelperQuiz.records"
+                                 rows="{{dataTableHelperQuiz.defaultRecordsCountPerPage}}"
+                                 [paginator]="false"
+                                 [lazy]="true"
+                                 [scrollable]="true"
+                                 ScrollWidth="100%"
+                                 [responsive]="dataTableHelperQuiz.isResponsive"
+                                 [resizableColumns]="dataTableHelperQuiz.resizableColumns">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 80px" [hidden]="!isGrantedAny('Pages.Quizzes.Edit', 'Pages.Quizzes.Delete')">{{l('Actions')}}</th>
+                                    <th style="width: 140px" pSortableColumn="name">
+                                        {{'Name' | localize}}(BR)
+                                        <p-sortIcon field="name"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 140px" pSortableColumn="description">
+                                        {{'Description' | localize}}
+                                        <p-sortIcon field="description"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 140px" pSortableColumn="validityStart">
+                                        {{'ValidityStart' | localize}}
+                                        <p-sortIcon field="validityStart"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 140px" pSortableColumn="validityEnd">
+                                        {{'ValidityEnd' | localize}}
+                                        <p-sortIcon field="validityEnd"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 140px" pSortableColumn="version">
+                                        {{'Version' | localize}}
+                                        <p-sortIcon field="version"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-record="$implicit">
+                                <tr>
+                                    <td style="width: 80px">
+                                        <div class="btn-group dropdown" dropdown container="body">
+                                            <button dropdownToggle class="dropdown-toggle btn btn-sm btn-primary">
+                                                <i class="fa fa-cog"></i><span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" *dropdownMenu>
+                                                <li>
+                                                    <a href="javascript:;" *ngIf="permission.isGranted('Pages.Quizzes.Edit')"
+                                                        (click)="createOrEditQuiz.show(record.id)">{{'Edit' | localize}}</a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" *ngIf="permission.isGranted('Pages.Quizzes.Delete')"
+                                                       (click)="deleteQuestion(record.id)">{{'Delete' | localize}}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title"> {{'Name' | localize}}</span>
+                                        {{record.name}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title"> {{'Description' | localize}}</span>
+                                        {{record.description}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title"> {{'ValidityStart' | localize}}</span>
+                                        {{record.validityStart | date: 'dd/MM/yyyy'}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title"> {{'ValidityEnd' | localize}}</span>
+                                        {{record.validityEnd | date: 'dd/MM/yyyy'}}
+                                    </td>
+                                    <td style="width: 140px">
+                                        <span class="ui-column-title"> {{'Version' | localize}}</span>
+                                        {{record.version}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <div class="primeng-no-data" *ngIf="dataTableHelperQuiz.totalRecordsCount == 0">
+                            {{'NoData' | localize}}
+                        </div>
+                        <div class="primeng-paging-container">
+                            <p-paginator [rows]="dataTableHelperQuiz.defaultRecordsCountPerPage"
+                                         #paginatorQuiz
+                                         (onPageChange)="getAll($event)"
+                                         [totalRecords]="dataTableHelperQuiz.totalRecordsCount"
+                                         [rowsPerPageOptions]="dataTableHelperQuiz.predefinedRecordsCountPerPage">
+                            </p-paginator>
+                            <span class="total-records-count">
+                                {{'TotalRecordsCount' | localize:dataTableHelperQuiz.totalRecordsCount}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <createOrEditQuizzesModal #createOrEditQuiz (modalSave)="reloadPage()"></createOrEditQuizzesModal>
+</div>
+

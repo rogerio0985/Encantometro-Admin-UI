@@ -1,0 +1,14 @@
+name: $(Build.SourceBranchName).$(Rev:r)
+
+pool:
+  vmImage: ubuntu-latest
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: AUTOMACAO/Gol.K8s.Pipelines
+      ref: refs/heads/k8s
+
+extends: 
+  template: stages/docker/docker.build.yaml@templates

@@ -1,0 +1,19 @@
+name: $(Build.SourceBranchName)
+
+pool:
+  vmImage: ubuntu-latest
+
+resources:
+  pipelines:
+    - pipeline: buildDocker
+      source: K8s.Build.Encantometro_Admin_UI
+      trigger: true
+      branch: "*"
+  repositories:
+    - repository: templates
+      type: git
+      name: AUTOMACAO/Gol.K8s.Pipelines
+      ref: refs/heads/k8s
+
+extends: 
+  template: stages/docker/docker.deploy.yaml@templates

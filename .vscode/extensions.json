@@ -1,0 +1,17 @@
+﻿{
+    "recommendations": [
+      "donjayamanne.githistory",
+      "esbenp.prettier-vscode",
+      "gformat.html-formatter",
+      "visualstudioexptteam.vscodeintellicode",
+      "donjayamanne.git-extension-pack",
+      "dbaeumer.jshint",
+      "sonarsource.sonarlint-vscode",
+      "ms-vscode.vs-keybindings",
+      "vscode-icons-team.vscode-icons",
+      "nicoespeon.abracadabra",
+      "ms-dotnettools.csharp",
+	  "johnpapa.angular-essentials"
+    ]
+  }
+  
