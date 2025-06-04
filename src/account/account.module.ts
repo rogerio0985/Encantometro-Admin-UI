@@ -1,8 +1,9 @@
 ﻿import { EafModule } from '@eaf/eaf.module';
-import * as ngCommon from '@angular/common';
+import { CommonModule as NgCommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@shared/common/common.module';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { UtilsModule } from '@shared/utils/utils.module';
@@ -20,8 +21,9 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 
 @NgModule({
     imports: [
-        ngCommon.CommonModule,
+        NgCommonModule,
         FormsModule,
+        RouterModule,
         HttpClientModule,
         HttpClientJsonpModule,
         ModalModule.forRoot(),

@@ -1,8 +1,9 @@
 ﻿import { EafModule } from '@eaf/eaf.module';
-import * as ngCommon from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { GlobalErrorHandler } from './globalErrorHandler';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { ChatSignalrService } from '@app/shared/layout/chat/chat-signalr.service';
 import { LoginAttemptsModalComponent } from '@app/shared/layout/login-attempts-modal.component';
@@ -92,8 +93,10 @@ export const googleTagManager = () => AppConsts.googleTagManager;
         ChatMessageComponent,
     ],
     imports: [
-        ngCommon.CommonModule,
+        CommonModule,
         FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
         HttpClientModule,
         HttpClientJsonpModule,
         ModalModule.forRoot(),
@@ -138,15 +141,12 @@ export const googleTagManager = () => AppConsts.googleTagManager;
 export class AppModule {
     constructor(public updates: SwUpdate) {
         if (updates.isEnabled) {
-            updates.activated.subscribe(event => {
-                console.log('old version was', event.previous);
-                console.log('new version is', event.current);
-            });
-
-            updates.available.subscribe(event => {
-                console.log('current version is', event.current);
-                console.log('available version is', event.available);
-                updates.activateUpdate().then(() => this.updateApp());
+            updates.versionUpdates.subscribe(event => {
+                if (event.type === 'VERSION_READY') {
+                    console.log('current version is', event.currentVersion);
+                    console.log('available version is', event.latestVersion);
+                    updates.activateUpdate().then(() => this.updateApp());
+                }
             });
         }
     }

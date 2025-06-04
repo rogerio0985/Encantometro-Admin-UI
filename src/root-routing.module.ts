@@ -6,12 +6,12 @@ const routes: Routes = [
     { path: '', redirectTo: '/app/main/forms', pathMatch: 'full' },
     {
         path: 'account',
-        loadChildren: 'account/account.module#AccountModule', //Lazy load account module
+        loadChildren: () => import('./account/account.module').then(m => m.AccountModule), //Lazy load account module
         data: { preload: true }
     },
     {
         path: 'print',
-        loadChildren: 'print/print.module#PrintModule', //Lazy load account module
+        loadChildren: () => import('./print/print.module').then(m => m.PrintModule), //Lazy load print module
     }
 ];
 

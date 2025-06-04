@@ -14,7 +14,7 @@ import { AppAuthenticationService } from './auth/app-authentication-service';
     ]
 })
 export class CommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<CommonModule> {
         return {
             ngModule: CommonModule,
             providers: [

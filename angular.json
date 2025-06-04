@@ -18,7 +18,7 @@
             "polyfills": "src/polyfills.ts",
             "serviceWorker": true,
             "ngswConfigPath": "ngsw-config.json",
-            "aot": false,
+
             "assets": [
               "src/assets",
               "src/web.config",
@@ -78,12 +78,10 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true,
-              "aot": true,
+
               "baseHref": "/admin/",
               "fileReplacements": [
                 {
