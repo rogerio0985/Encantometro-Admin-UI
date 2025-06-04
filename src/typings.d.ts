@@ -1,8 +1,7 @@
 ﻿///<reference path="./assets/lib/eaf-web-resources/Eaf/Framework/scripts/eaf.d.ts"/>
 ///<reference path="./assets/lib/eaf-web-resources/Eaf/Framework/scripts/libs/eaf.jquery.d.ts"/>
 ///<reference path="./assets/lib/eaf-web-resources/Eaf/Framework/scripts/libs/eaf.signalr.d.ts"/>
-///<reference path="../node_modules/moment/moment.d.ts"/>
-///<reference path="../node_modules/@types/moment-timezone/index.d.ts"/>
+// Moment types are handled by @types/moment package
 
 // Typings reference file, see links for more information
 // https://github.com/typings/typings

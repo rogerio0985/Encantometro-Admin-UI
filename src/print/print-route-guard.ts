@@ -2,8 +2,8 @@ import { PermissionCheckerService } from '@eaf/auth/permission-checker.service';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Router, RouterStateSnapshot } from '@angular/router';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { Data, Route } from '@node_modules/@angular/router/src/config';
-import { Observable } from '@node_modules/rxjs/internal/Observable';
+import { Data, Route } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class PrintRouteGuard implements CanActivate, CanActivateChild, CanLoad {
