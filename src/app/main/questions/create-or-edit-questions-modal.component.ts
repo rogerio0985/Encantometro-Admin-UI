@@ -4,8 +4,7 @@ import { finalize } from 'rxjs/operators';
 import { QuestionDto, QuestionItemDto, QuizServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { List } from 'lodash';
-import { threadId } from 'worker_threads';
-import { analyzeAndValidateNgModules } from '@angular/compiler';
+
 import { DataTableHelper } from '@shared/helpers/DataTableHelper';
 
 

@@ -18,7 +18,7 @@
             "polyfills": "src/polyfills.ts",
             "serviceWorker": true,
             "ngswConfigPath": "ngsw-config.json",
-            "aot": false,
+
             "assets": [
               "src/assets",
               "src/web.config",
@@ -60,7 +60,7 @@
               "node_modules/sweetalert2/dist/sweetalert2.js",
               "node_modules/cookieconsent/build/cookieconsent.min.js",
               "node_modules/html2canvas/dist/html2canvas.min.js",
-              "node_modules/jspdf/dist/jspdf.min.js",
+              "node_modules/jspdf/dist/jspdf.umd.min.js",
               "src/assets/lib/freezeUI/freeze-ui.js",
               "src/assets/lib/eaf-web-resources/eaf.js",
               "src/assets/lib/eaf-web-resources/eaf.sweet-alert.js",
@@ -78,12 +78,10 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true,
-              "aot": true,
+
               "baseHref": "/admin/",
               "fileReplacements": [
                 {
